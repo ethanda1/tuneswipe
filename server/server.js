@@ -3,7 +3,7 @@ const app = express();
 import spotifyWebApi from 'spotify-web-api-node';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-const path = require('path');
+import path from 'path';
 
 app.use(cors());
 app.use(bodyParser.json());
