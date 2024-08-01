@@ -3,12 +3,16 @@ const app = express();
 import spotifyWebApi from 'spotify-web-api-node';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+const path = require('path');
 
 app.use(cors());
 app.use(bodyParser.json());
+// Serve static files from the "src" directory
 app.use(express.static(path.join(__dirname, 'src')));
+
+// Serve index.html for all other routes
 app.get('*', (req, res) => { 
-  res.sendFile(path.join(__dirname + '/client/build/index.html')) 
+  res.sendFile(path.join(__dirname, 'index.html')); 
 });
 app.post("/refresh", (req, res) => {
     const refreshToken = req.body.refreshToken
