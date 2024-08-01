@@ -8,7 +8,7 @@ export const Songcard = ({ code }) => {
   const [recommendations, setRecommendations] = useState([]);
   const [index, setIndex] = useState(0);
   const spotifyApi = new spotifyWebApi({
-    clientId: CLIENT_ID,
+    clientId: process.env.CLIENT_ID,
   });
 
   useEffect(() => {
