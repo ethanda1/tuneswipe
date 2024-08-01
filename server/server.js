@@ -6,6 +6,7 @@ import bodyParser from 'body-parser';
 
 app.use(cors());
 app.use(bodyParser.json());
+
 app.post("/refresh", (req, res) => {
     const refreshToken = req.body.refreshToken
     const spotifyApi = new SpotifyWebApi({
