@@ -12,8 +12,8 @@ const AUTH_URL =
 function App() {
   return code ? <Songcard code={code} /> : (
     <div className='bg-black min-h-screen bg-gradient-to-b from-gray-600 to-black-200 flex items-center justify-center flex-col pb-20'>
-      <div className='text-2xl text-green-200 pb-10'>
-        Song Tinder
+      <div className='text-6xl text-green-200 pb-10 font-bold'>
+        TuneSwipe
       </div>
       <a href={AUTH_URL} className='border-4 p-5 rounded-full bg-gradient-to-r from-emerald-300 to-emerald-200 text-2xl font-bold text-black font-arial'>Login with Spotify</a>
     </div>
