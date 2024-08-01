@@ -14,7 +14,7 @@ app.use(express.static(path.join(__dirname, 'src')));
 
 // Serve index.html for all other routes
 app.get('*', (req, res) => { 
-  res.sendFile(path.join(__dirname, 'index.html')); 
+  res.sendFile(path.join(__dirname, '../index.html')); 
 });
 app.post("/refresh", (req, res) => {
     const refreshToken = req.body.refreshToken
