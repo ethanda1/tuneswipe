@@ -15,11 +15,10 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Serve static files from the "src" directory
-app.use(express.static(path.join(__dirname, 'src')));
+app.use(express.static(path.join(__dirname, 'dist')));
 
-// Serve index.html for all other routes
-app.get('*', (req, res) => { 
-  res.sendFile(path.join(__dirname, 'index.html')); 
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 app.post("/refresh", (req, res) => {
