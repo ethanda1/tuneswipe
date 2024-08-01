@@ -4,7 +4,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
-
+import process from './process';
 // Get the resolved path to the file and directory
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
