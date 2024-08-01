@@ -25,8 +25,8 @@ app.post("/refresh", (req, res) => {
     const refreshToken = req.body.refreshToken;
     const spotifyApi = new spotifyWebApi({
       redirectUri: 'https://tuneswipe-1234520f34b7.herokuapp.com/',
-      clientId: 'CLIENT_ID',
-      clientSecret: 'CLIENT_SECRET',
+      clientId: CLIENT_ID,
+      clientSecret: CLIENT_SECRET,
       refreshToken,
     });
 
@@ -47,8 +47,8 @@ app.post('/login', (req, res) => {
     const code = req.body.code;
     const spotifyApi = new spotifyWebApi({
         redirectUri: 'https://tuneswipe-1234520f34b7.herokuapp.com/',
-        clientId: 'CLIENT_ID',
-        clientSecret: 'CLIENT_SECRET'
+        clientId:CLIENT_ID,
+        clientSecret: CLIENT_SECRET
     });
 
     spotifyApi.authorizationCodeGrant(code)
