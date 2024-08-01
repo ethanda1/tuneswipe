@@ -50,7 +50,7 @@ app.post('/login', (req, res) => {
         });
 });
 
-port = process.env.PORT || 10000;
+const port = process.env.PORT || 10000;
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
