@@ -9,9 +9,9 @@ app.use(bodyParser.json());
 app.post("/refresh", (req, res) => {
     const refreshToken = req.body.refreshToken
     const spotifyApi = new SpotifyWebApi({
-      redirectUri:'http://localhost:5173',
-      clientId: '6223f4e8625a427a83463c0ac5848388',
-      clientSecret: 'a079d43d9f874813841b8914620f92de',
+      redirectUri:'https://songtinder.onrender.com',
+      clientId: 'CLIENT_ID',
+      clientSecret: 'CLIENT_SECRET',
       refreshToken,
     })
   
@@ -31,9 +31,9 @@ app.post("/refresh", (req, res) => {
 app.post('/login', (req, res) => {
     const code = req.body.code;
     const spotifyApi = new spotifyWebApi({
-        redirectUri: 'http://localhost:5173',
-        clientId: '6223f4e8625a427a83463c0ac5848388',
-        clientSecret: 'a079d43d9f874813841b8914620f92de'
+        redirectUri: 'https://songtinder.onrender.com',
+        clientId: 'CLIENT_ID',
+        clientSecret: 'CLIENT_SECRET'
     });
 
     spotifyApi.authorizationCodeGrant(code)
@@ -50,6 +50,8 @@ app.post('/login', (req, res) => {
         });
 });
 
-app.listen(3001, () => {
-    console.log('Server running on port 3001');
+const port = process.env.PORT || 3001; 
+
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
 });
