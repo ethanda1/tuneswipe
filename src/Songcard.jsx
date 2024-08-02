@@ -140,13 +140,13 @@ export const Songcard = ({ code }) => {
               )}
             </div>
             <img
-              src="public/360_F_520196054_Uy8LwGHzlqAQWEG3rMICCfaSZuAzXTF2.jpg"
+              src="/360_F_520196054_Uy8LwGHzlqAQWEG3rMICCfaSZuAzXTF2.jpg"
               onClick={handleClickLike}
               className="absolute w-10 right-6 bottom-6"
               alt="Next"
             />
             <img
-              src="public/126504.png"
+              src="/126504.png"
               onClick={handleClick}
               className="absolute w-8 left-6 bottom-6"
               alt="Next"
