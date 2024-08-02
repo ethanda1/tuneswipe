@@ -106,7 +106,7 @@ export const Songcard = ({ code }) => {
           <div key={currentTrack.id} className={`w-full h-full p-4 mb-4 rounded-xl shadow-xl relative transition ease-in-out ${clickedLike ? 'bg-red-400' : ''}`}>
             {songUrl ? (
               <a href={songUrl} target="_blank" rel="noopener noreferrer">
-                <div className='hover:scale-110 transition ease-in-out duration-1000 hover:bg-gray-100 p-5 rounded-xl'>
+                <div className={`hover:scale-110 transition ease-in-out duration-1000 hover:bg-gray-100 p-5 rounded-xl transition ease-in-out ${clickedLike ? 'bg-red-400' : ''}`}>
                   {imageUrl && (
                     <img src={imageUrl} alt={currentTrack.name} className="w-full h-auto rounded-lg" />
                   )}
@@ -142,11 +142,11 @@ export const Songcard = ({ code }) => {
             <img
               src="/av85f1b171d762037fe92.png"
               onClick={handleClick}
-              className="absolute w-10 right-6 bottom-6 hover:scale-110 transition ease-in-out duration-300"
+              className={`absolute w-10 right-6 bottom-6 hover:scale-110 transition ease-in-out duration-300 ${clickedLike ? 'scale:150' : ''}`}
               alt="Next"
             />
             <img
-              src="/360_F_520196054_Uy8LwGHzlqAQWEG3rMICCfaSZuAzXTF2.jpg"
+              src="/heart-logo-png-transparent.png"
               onClick={handleClickLike}
               className="absolute w-10 left-6 bottom-6 hover:scale-110 transition ease-in-out duration-300"
               alt="Like"
