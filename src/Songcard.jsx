@@ -8,6 +8,7 @@ export const Songcard = ({ code }) => {
   const [recommendations, setRecommendations] = useState([]);
   const [index, setIndex] = useState(0);
   const [likedSongs, setLikedSongs] = useState([]);
+  const [clickedLike, setClickedLike] = useState(false);
   const spotifyApi = new spotifyWebApi({
     clientId: import.meta.env.CLIENT_ID,
   });
@@ -49,6 +50,8 @@ export const Songcard = ({ code }) => {
       setRecommendations([]);
       localStorage.removeItem('recommendations');
       getRecommendations();
+      setClickedLike(true);
+      setTimeout(() => setClickedLike(false), 500);
     }
     setLikedSongs((prevLikedSongs) => [...prevLikedSongs, recommendations[index]]);
 
@@ -96,17 +99,19 @@ export const Songcard = ({ code }) => {
 </div>
         {clicked?(
                 likedSongs.map((track) => 
+                  <>
                   <a href={track.uri} className='hover:animate-pulse'>
-                  <div className='z-50'>{track.name} <span className='font-normal'>by</span> {track.artists.map(artist => artist.name).join(', ')}</div></a>)
+                  <div className='z-50'>{track.name} <span className='font-normal'>by</span> {track.artists.map(artist => artist.name).join(', ')}</div></a>
+                  </>)
       ):null}
       </div>
 
-      <div className="aspect-[9/16] w-full max-w-xs rounded-3xl flex flex-col items-center relative pt-7 z-0">
+      <div className={`aspect-[9/16] w-full max-w-xs rounded-3xl flex flex-col items-center relative pt-7 z-0 transition 0.5s ease-in-out${clickedLike ? 'bg-red' : ''}`}>
         {recommendations.length > 0 && (
-          <div key={currentTrack.id} className="w-full h-full bg-white p-4 mb-4 rounded-lg shadow-md relative">
+          <div key={currentTrack.id} className="w-full h-full bg-white p-4 mb-4 rounded-lg shadow-xl relative">
             {songUrl ? (
               <a href={songUrl} target="_blank" rel="noopener noreferrer">
-                <div className='hover:animate-pulse'>
+                <div className='hover:scale-150 transition ease-in-out duration-1000'>
                   {imageUrl && (
                     <img src={imageUrl} alt={currentTrack.name} className="w-full h-auto rounded-lg" />
                   )}
@@ -141,13 +146,13 @@ export const Songcard = ({ code }) => {
             </div>
             <img
               src="/av85f1b171d762037fe92.png"
-              onClick={handleClickLike}
+              onClick={handleClick}
               className="absolute w-10 right-6 bottom-6 hover:scale-110 transition ease-in-out duration-300"
               alt="Next"
             />
             <img
               src="/360_F_520196054_Uy8LwGHzlqAQWEG3rMICCfaSZuAzXTF2.jpg"
-              onClick={handleClick}
+              onClick={handleClickLike}
               className="absolute w-10 left-6 bottom-6 hover:scale-110 transition ease-in-out duration-300"
               alt="Next"
             />
