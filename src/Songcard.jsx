@@ -111,7 +111,7 @@ export const Songcard = ({ code }) => {
           <div key={currentTrack.id} className="w-full h-full bg-white p-4 mb-4 rounded-lg shadow-xl relative">
             {songUrl ? (
               <a href={songUrl} target="_blank" rel="noopener noreferrer">
-                <div className='hover:scale-110 transition ease-in-out duration-1000 bg-gray-100'>
+                <div className='hover:scale-110 transition ease-in-out duration-1000 hover:bg-gray-100'>
                   {imageUrl && (
                     <img src={imageUrl} alt={currentTrack.name} className="w-full h-auto rounded-lg" />
                   )}
