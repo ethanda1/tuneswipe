@@ -7,4 +7,7 @@ export default defineConfig({
   build: {
     outDir: 'dist', // The directory to output the build files
   },
+  server: {
+    hmr: false
+}
 });

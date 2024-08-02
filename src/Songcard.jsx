@@ -7,12 +7,16 @@ export const Songcard = ({ code }) => {
   const accessToken = useAuth(code);
   const [recommendations, setRecommendations] = useState([]);
   const [index, setIndex] = useState(0);
+  const [likedSongs, setLikedSongs] = useState([]);
   const spotifyApi = new spotifyWebApi({
-    clientId: import.meta.env.CLIENT_ID,
+    clientId: '6223f4e8625a427a83463c0ac5848388',
   });
 
   useEffect(() => {
-    if (accessToken) {
+    const storedRecommendations = localStorage.getItem('recommendations');
+    if (storedRecommendations) {
+      setRecommendations(JSON.parse(storedRecommendations));
+    } else if (accessToken) {
       const getRecommendations = async () => {
         try {
           spotifyApi.setAccessToken(accessToken);
@@ -24,6 +28,7 @@ export const Songcard = ({ code }) => {
           });
 
           setRecommendations(response.body.tracks);
+          localStorage.setItem('recommendations', JSON.stringify(response.body.tracks));
         } catch (error) {
           console.error('Error getting recommendations:', error);
         }
@@ -39,36 +44,94 @@ export const Songcard = ({ code }) => {
     }
   }, [index, recommendations]);
 
+  const handleClickLike = () => {
+    if (index === 99) {
+      setRecommendations([]);
+      localStorage.removeItem('recommendations');
+      getRecommendations();
+    }
+    setLikedSongs((prevLikedSongs) => [...prevLikedSongs, recommendations[index]]);
+
+    setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
+  };
   const handleClick = () => {
     if (index === 99) {
       setRecommendations([]);
+      localStorage.removeItem('recommendations');
       getRecommendations();
     }
     setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
   };
-
+  const createPlaylist = async () => {
+    try {
+      spotifyApi.setAccessToken(accessToken);
+      const user = await spotifyApi.getMe();
+      const playlist = await spotifyApi.createPlaylist(user.body.id, {
+        name: 'TuneSwipe Liked Songs',
+        description: 'Playlist created with liked songs from TuneSwipe',
+        public: false,
+      });
+    } catch (error) {
+      console.log('error creating playlist:', error);
+    }
+  };
+  
+  const [clicked, setClicked] = useState(false);
+  const handleClicked = () => {
+    setClicked(!clicked);
+  };
   const currentTrack = recommendations[index];
   const imageUrl = currentTrack?.album?.images?.[0]?.url;
   const previewUrl = currentTrack?.preview_url;
-
+  const songUrl = currentTrack?.external_urls?.spotify;
+  
   return (
-    <div className="flex items-center justify-center h-screen">
-      <div className="aspect-[9/16] w-full max-w-xs rounded-3xl flex flex-col items-center pt-7">
+    <div className="flex items-center justify-center h-screen bg-gray relative">
+      <div className='absolute left-10 top-10 z-50 shadow-md text-black bg-white font-semibold py-2 px-4 rounded w-auto ' >
+      <div 
+  className={`text-2xl hover:animate-pulse ${clicked ? 'mb-5 border-b-2 border-black' : ''}`}
+  onClick={handleClicked}
+>
+  Liked Songs
+</div>
+        {clicked?(
+                likedSongs.map((track) => 
+                  <a href={track.uri} className='hover:animate-pulse'>
+                  <div className='z-50'>{track.name} <span className='font-normal'>by</span> {track.artists.map(artist => artist.name).join(', ')}</div></a>)
+      ):null}
+      </div>
+
+      <div className="aspect-[9/16] w-full max-w-xs rounded-3xl flex flex-col items-center relative pt-7 z-0">
         {recommendations.length > 0 && (
           <div key={currentTrack.id} className="w-full h-full bg-white p-4 mb-4 rounded-lg shadow-md relative">
-            {imageUrl && (
-              <img src={imageUrl} alt={currentTrack.name} className="w-full h-auto rounded-lg" />
+            {songUrl ? (
+              <a href={songUrl} target="_blank" rel="noopener noreferrer">
+                <div className='hover:animate-pulse'>
+                  {imageUrl && (
+                    <img src={imageUrl} alt={currentTrack.name} className="w-full h-auto rounded-lg" />
+                  )}
+                  <div className="mt-4 text-lg font-semibold">{currentTrack.name}</div>
+                  <div className="text-gray-600">
+                    {currentTrack.artists.map(artist => artist.name).join(', ')}
+                  </div>
+                </div>
+              </a>
+            ) : (
+              <div>
+                {imageUrl && (
+                  <img src={imageUrl} alt={currentTrack.name} className="w-full h-auto rounded-lg" />
+                )}
+                <div className="mt-4 text-lg font-semibold">{currentTrack.name}</div>
+                <div className="text-gray-600">
+                  {currentTrack.artists.map(artist => artist.name).join(', ')}
+                </div>
+              </div>
             )}
-            <div className="mt-4 text-lg font-semibold">{currentTrack.name}</div>
-            <div className="text-gray-600">
-              {currentTrack.artists.map(artist => artist.name).join(', ')}
-            </div>
             <div className="flex flex-col items-center justify-content">
               <div className="flex flex-col text-xs items-center justify-center"></div>
               {previewUrl ? (
                 <>
-                  <h1 className='text-xs'>30 second preview</h1>
-                  <audio controls src={previewUrl} autoPlay className="pt-2" loop>
+                  <audio controls src={previewUrl} autoPlay className="absolute bottom-20" loop>
                     Your browser does not support the audio element.
                   </audio>
                 </>
@@ -77,13 +140,13 @@ export const Songcard = ({ code }) => {
               )}
             </div>
             <img
-              src="public\360_F_520196054_Uy8LwGHzlqAQWEG3rMICCfaSZuAzXTF2.jpg"
-              onClick={handleClick}
+              src="public/360_F_520196054_Uy8LwGHzlqAQWEG3rMICCfaSZuAzXTF2.jpg"
+              onClick={handleClickLike}
               className="absolute w-10 right-6 bottom-6"
               alt="Next"
             />
             <img
-              src="public\126504.png"
+              src="public/126504.png"
               onClick={handleClick}
               className="absolute w-8 left-6 bottom-6"
               alt="Next"
