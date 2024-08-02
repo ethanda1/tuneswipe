@@ -23,22 +23,3 @@ audio::-webkit-media-controls-overflow-menu-button{
   display: none !important;
 }
 
-.text-container {
-  width: 100%;
-  overflow: hidden;
-  white-space: nowrap;
-  position: relative;
-  display: flex;
-}
-
-.text-content {
-  display: flex;
-  align-items: center;
-  will-change: transform;
-  transition: transform 0.5s ease-out;
-}
-
-.track-name, .artist-names {
-  display: inline-block;
-  padding-right: 1rem; /* Adjust spacing between elements if needed */
-}

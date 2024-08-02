@@ -81,28 +81,7 @@ export const Songcard = ({ code }) => {
   const imageUrl = currentTrack?.album?.images?.[0]?.url;
   const previewUrl = currentTrack?.preview_url;
   const songUrl = currentTrack?.external_urls?.spotify;
-  window.addEventListener('DOMContentLoaded', () => {
-    const textContainer = document.querySelector('.text-container');
-    const textContent = document.querySelector('.text-content');
-  
-    function checkOverflow() {
-      const containerWidth = textContainer.offsetWidth;
-      const contentWidth = textContent.scrollWidth;
-  
-      if (contentWidth > containerWidth) {
-        const scrollDistance = contentWidth - containerWidth;
-        textContent.style.transform = `translateX(-${scrollDistance}px)`;
-        textContent.style.transition = 'transform 10s linear infinite';
-      } else {
-        textContent.style.transform = 'none';
-        textContent.style.transition = 'none';
-      }
-    }
-  
-    checkOverflow();
-    window.addEventListener('resize', checkOverflow);
-  });
-  
+
   return (
     <div className="flex items-center justify-center h-screen bg-gray relative">
       <div className='absolute left-10 top-10 z-50 shadow-md text-black bg-white font-semibold py-2 px-4 rounded w-auto ' >
@@ -134,15 +113,10 @@ export const Songcard = ({ code }) => {
                   {imageUrl && (
                     <img src={imageUrl} alt={currentTrack.name} className="w-full h-auto rounded-lg text-nowrap overflow-hidden" />
                   )}
-<div className="text-container">
-  <div className="text-content">
-    <div className="track-name">{currentTrack.name}</div>
-    <div className="artist-names">
-      {currentTrack.artists.map(artist => artist.name).join(', ')}
-    </div>
-  </div>
-</div>
-
+                  <div className="mt-4 text-lg font-semibold text-nowrap overflow-hidden ">{currentTrack.name}</div>
+                  <div className="text-gray-600 text-nowrap overflow-hidden">
+                    {currentTrack.artists.map(artist => artist.name).join(', ')}
+                  </div>
                 </div>
               </a>
             ) : (
