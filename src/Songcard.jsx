@@ -133,7 +133,7 @@ export const Songcard = ({ code }) => {
             <div className="flex flex-col items-center justify-content relative z-20">
               <div className="flex flex-col text-xs items-center justify-center"></div>
               {previewUrl ? (
-                <audio controls src={previewUrl} autoPlay className="absolute bottom-20" loop>
+                <audio controls src={previewUrl} autoPlay className="mt-20 bg-transparent" loop>
                   Your browser does not support the audio element.
                 </audio>
               ) : (
@@ -149,7 +149,7 @@ export const Songcard = ({ code }) => {
             <img
               src="/heart-logo-png-transparent.png"
               onClick={handleClickLike}
-              className="absolute w-10 left-6 bottom-6 hover:scale-110 transition ease-in-out duration-300 z-20"
+              className={`absolute w-10 left-6 bottom-6 hover:scale-110 transition ease-in-out duration-300 z-20 ${clickedLike ? 'scale-150' : ''}`}
               alt="Like"
             />
           </div>
