@@ -23,7 +23,7 @@ app.get('*', (req, res) => {
 app.post("/refresh", (req, res) => {
     const refreshToken = req.body.refreshToken;
     const spotifyApi = new spotifyWebApi({
-      redirectUri: 'https://tuneswipe-1234520f34b7.herokuapp.com',
+      redirectUri: 'https://songtinder.onrender.com',
       clientId: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
       refreshToken,
@@ -45,7 +45,7 @@ app.post("/refresh", (req, res) => {
 app.post('/login', (req, res) => {
     const code = req.body.code;
     const spotifyApi = new spotifyWebApi({
-        redirectUri: 'https://tuneswipe-1234520f34b7.herokuapp.com',
+        redirectUri: 'https://songtinder.onrender.com',
         clientId:process.env.CLIENT_ID,
         clientSecret: process.env.CLIENT_SECRET
     });

@@ -67,7 +67,7 @@ export const Songcard = ({ code }) => {
               <div className="flex flex-col text-xs items-center justify-center"></div>
               {previewUrl ? (
                 <>
-                  <h1>30 second preview</h1>
+                  <h1 className='text-xs'>30 second preview</h1>
                   <audio controls src={previewUrl} autoPlay className="pt-2" loop>
                     Your browser does not support the audio element.
                   </audio>
@@ -77,13 +77,13 @@ export const Songcard = ({ code }) => {
               )}
             </div>
             <img
-              src="public/360_F_520196054_Uy8LwGHzlqAQWEG3rMICCfaSZuAzXTF2.jpg"
+              src="public\360_F_520196054_Uy8LwGHzlqAQWEG3rMICCfaSZuAzXTF2.jpg"
               onClick={handleClick}
               className="absolute w-10 right-6 bottom-6"
               alt="Next"
             />
             <img
-              src="public/126504.png"
+              src="public\126504.png"
               onClick={handleClick}
               className="absolute w-8 left-6 bottom-6"
               alt="Next"
