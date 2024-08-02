@@ -48,9 +48,10 @@ export const Songcard = ({ code }) => {
   const handleClickLike = () => {
     setLikedSongs((prevLikedSongs) => [...prevLikedSongs, recommendations[index]]);
     setClickedLike(true);
-    setTimeout(() => setClickedLike(false), 1000);
-
-    setTimeout (()=>setIndex((prevIndex) => (prevIndex + 1) % recommendations.length),1000);
+    setTimeout(() => {
+      setClickedLike(false);
+      setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
+    }, 1000);
   };
 
   const handleClick = () => {
@@ -101,13 +102,14 @@ export const Songcard = ({ code }) => {
         )}
       </div>
 
-      <div className={`aspect-[9/16] w-full max-w-xs rounded-full flex flex-col items-center relative pt-7 z-0 `}>
+      
+      <div className="aspect-[9/16] w-full max-w-xs rounded-xl flex flex-col items-center relative pt-7 z-0">
         {recommendations.length > 0 && (
-          <div className={`z-30 w-full h-full p-4 mb-4 opacity-0 rounded-xl transition 1s ease-in-out ${clickedLike ? 'bg-red-400 opacity-50' : ''}`}>
-          <div key={currentTrack.id} className={`w-full h-full p-4 mb-4 rounded-xl shadow-xl relative z-10`}>
+          <div className="w-full h-full p-4 mb-4 rounded-xl shadow-xl relative z-10">
+            <div className={`absolute inset-0 bg-red-400 opacity-0 transition-opacity duration-300 rounded-xl ${clickedLike ? 'opacity-50' : ''}`}></div>
             {songUrl ? (
-              <a href={songUrl} target="_blank" rel="noopener noreferrer">
-                <div className={`hover:scale-110 transition ease-in-out duration-1000 hover:bg-gray-100 p-5 `}>
+              <a href={songUrl} target="_blank" rel="noopener noreferrer" className="block relative z-20">
+                <div className="hover:scale-110 transition ease-in-out duration-1000 hover:bg-gray-100 p-5">
                   {imageUrl && (
                     <img src={imageUrl} alt={currentTrack.name} className="w-full h-auto rounded-lg" />
                   )}
@@ -118,7 +120,7 @@ export const Songcard = ({ code }) => {
                 </div>
               </a>
             ) : (
-              <div>
+              <div className="relative z-20">
                 {imageUrl && (
                   <img src={imageUrl} alt={currentTrack.name} className="w-full h-auto rounded-lg" />
                 )}
@@ -128,14 +130,12 @@ export const Songcard = ({ code }) => {
                 </div>
               </div>
             )}
-            <div className="flex flex-col items-center justify-content">
+            <div className="flex flex-col items-center justify-content relative z-20">
               <div className="flex flex-col text-xs items-center justify-center"></div>
               {previewUrl ? (
-                <>
-                  <audio controls src={previewUrl} autoPlay className="absolute bottom-20" loop>
-                    Your browser does not support the audio element.
-                  </audio>
-                </>
+                <audio controls src={previewUrl} autoPlay className="absolute bottom-20" loop>
+                  Your browser does not support the audio element.
+                </audio>
               ) : (
                 <div>This song does not have playback</div>
               )}
@@ -143,16 +143,15 @@ export const Songcard = ({ code }) => {
             <img
               src="/av85f1b171d762037fe92.png"
               onClick={handleClick}
-              className={`absolute w-10 right-6 bottom-6 hover:scale-110 transition ease-in-out duration-300 transition 1s ease-in-out ${clickedLike ? 'scale-150' : ''}`}
+              className="absolute w-10 right-6 bottom-6 hover:scale-110 transition ease-in-out duration-300 z-20"
               alt="Next"
             />
             <img
               src="/heart-logo-png-transparent.png"
               onClick={handleClickLike}
-              className="absolute w-10 left-6 bottom-6 hover:scale-110 transition ease-in-out duration-300"
+              className="absolute w-10 left-6 bottom-6 hover:scale-110 transition ease-in-out duration-300 z-20"
               alt="Like"
             />
-          </div>
           </div>
         )}
       </div>
