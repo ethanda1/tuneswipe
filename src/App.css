@@ -23,11 +23,22 @@ audio::-webkit-media-controls-overflow-menu-button{
   display: none !important;
 }
 
-<div className="text-container">
-  <div className="text-content">
-    <div className="track-name">{currentTrack.name}</div>
-    <div className="artist-names">
-      {currentTrack.artists.map(artist => artist.name).join(', ')}
-    </div>
-  </div>
-</div>
+.text-container {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  display: flex;
+}
+
+.text-content {
+  display: flex;
+  align-items: center;
+  will-change: transform;
+  transition: transform 0.5s ease-out;
+}
+
+.track-name, .artist-names {
+  display: inline-block;
+  padding-right: 1rem; /* Adjust spacing between elements if needed */
+}
