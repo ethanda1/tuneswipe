@@ -46,25 +46,17 @@ export const Songcard = ({ code }) => {
   }, [index, recommendations]);
 
   const handleClickLike = () => {
-    if (index === 99) {
-      setRecommendations([]);
-      localStorage.removeItem('recommendations');
-      getRecommendations();
-      setClickedLike(true);
-      setTimeout(() => setClickedLike(false), 500);
-    }
     setLikedSongs((prevLikedSongs) => [...prevLikedSongs, recommendations[index]]);
+    setClickedLike(true);
+    setTimeout(() => setClickedLike(false), 1000);
 
     setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
   };
+
   const handleClick = () => {
-    if (index === 99) {
-      setRecommendations([]);
-      localStorage.removeItem('recommendations');
-      getRecommendations();
-    }
     setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
   };
+
   const createPlaylist = async () => {
     try {
       spotifyApi.setAccessToken(accessToken);
@@ -78,40 +70,43 @@ export const Songcard = ({ code }) => {
       console.log('error creating playlist:', error);
     }
   };
-  
+
   const [clicked, setClicked] = useState(false);
   const handleClicked = () => {
     setClicked(!clicked);
   };
+
   const currentTrack = recommendations[index];
   const imageUrl = currentTrack?.album?.images?.[0]?.url;
   const previewUrl = currentTrack?.preview_url;
   const songUrl = currentTrack?.external_urls?.spotify;
-  
+
   return (
     <div className="flex items-center justify-center h-screen bg-gray relative">
       <div className='absolute left-10 top-10 z-50 shadow-md text-black bg-white font-semibold py-2 px-4 rounded w-auto ' >
-      <div 
-  className={`text-2xl hover:animate-pulse ${clicked ? 'mb-5 border-b-2 border-black' : ''}`}
-  onClick={handleClicked}
->
-  Liked Songs
-</div>
-        {clicked?(
-                likedSongs.map((track) => 
-                  <>
-                  <a href={track.uri} className='hover:animate-pulse'>
-                  <div className='z-50'>{track.name} <span className='font-normal'>by</span> {track.artists.map(artist => artist.name).join(', ')}</div></a>
-                  </>)
-      ):null}
+        <div 
+          className={`text-2xl hover:animate-pulse ${clicked ? 'mb-5 border-b-2 border-black' : ''}`}
+          onClick={handleClicked}
+        >
+          Liked Songs
+        </div>
+        {clicked && (
+          likedSongs.map((track, idx) => (
+            <div key={idx}>
+              <a href={track.uri} className='hover:animate-pulse'>
+                <div className='z-50'>{track.name} <span className='font-normal'>by</span> {track.artists.map(artist => artist.name).join(', ')}</div>
+              </a>
+            </div>
+          ))
+        )}
       </div>
 
-      <div className={`aspect-[9/16] w-full max-w-xs rounded-3xl flex flex-col items-center relative pt-7 z-0 transition ease-in-out ${clickedLike ? 'bg-red-200' : ''}`}>
+      <div className={`aspect-[9/16] w-full max-w-xs rounded-3xl flex flex-col items-center relative pt-7 z-0 transition ease-in-out ${clickedLike ? 'bg-red-400' : ''}`}>
         {recommendations.length > 0 && (
           <div key={currentTrack.id} className="w-full h-full bg-white p-4 mb-4 rounded-lg shadow-xl relative">
             {songUrl ? (
               <a href={songUrl} target="_blank" rel="noopener noreferrer">
-                <div className='hover:scale-110 transition ease-in-out duration-1000 hover:bg-gray-100'>
+                <div className='hover:scale-110 transition ease-in-out duration-1000 hover:bg-gray-100 p-5'>
                   {imageUrl && (
                     <img src={imageUrl} alt={currentTrack.name} className="w-full h-auto rounded-lg" />
                   )}
@@ -154,7 +149,7 @@ export const Songcard = ({ code }) => {
               src="/360_F_520196054_Uy8LwGHzlqAQWEG3rMICCfaSZuAzXTF2.jpg"
               onClick={handleClickLike}
               className="absolute w-10 left-6 bottom-6 hover:scale-110 transition ease-in-out duration-300"
-              alt="Next"
+              alt="Like"
             />
           </div>
         )}
