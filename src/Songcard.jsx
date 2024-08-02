@@ -50,7 +50,7 @@ export const Songcard = ({ code }) => {
     setClickedLike(true);
     setTimeout(() => setClickedLike(false), 1000);
 
-    setTimeout (()=>setIndex((prevIndex) => (prevIndex + 1) % recommendations.length),);
+    setTimeout (()=>setIndex((prevIndex) => (prevIndex + 1) % recommendations.length),1000);
   };
 
   const handleClick = () => {
