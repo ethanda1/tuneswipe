@@ -103,10 +103,10 @@ export const Songcard = ({ code }) => {
 
       <div className={`aspect-[9/16] w-full max-w-xs rounded-full flex flex-col items-center relative pt-7 z-0 `}>
         {recommendations.length > 0 && (
-          <div key={currentTrack.id} className={`w-full h-full p-4 mb-4 rounded-xl shadow-xl relative transition ease-in-out ${clickedLike ? 'bg-red-400' : ''}`}>
+          <div key={currentTrack.id} className={`w-full h-full p-4 mb-4 rounded-xl shadow-xl relative transition 1s ease-in-out ${clickedLike ? 'bg-red-400' : ''}`}>
             {songUrl ? (
               <a href={songUrl} target="_blank" rel="noopener noreferrer">
-                <div className={`hover:scale-110 transition ease-in-out duration-1000 hover:bg-gray-100 p-5 rounded-xl transition ease-in-out ${clickedLike ? 'bg-red-400' : ''}`}>
+                <div className={`hover:scale-110 transition ease-in-out duration-1000 hover:bg-gray-100 p-5 rounded-xl transition 1s ease-in-out ${clickedLike ? 'bg-red-400' : ''}`}>
                   {imageUrl && (
                     <img src={imageUrl} alt={currentTrack.name} className="w-full h-auto rounded-lg" />
                   )}
@@ -142,7 +142,7 @@ export const Songcard = ({ code }) => {
             <img
               src="/av85f1b171d762037fe92.png"
               onClick={handleClick}
-              className={`absolute w-10 right-6 bottom-6 hover:scale-110 transition ease-in-out duration-300 ${clickedLike ? 'scale:150' : ''}`}
+              className={`absolute w-10 right-6 bottom-6 hover:scale-110 transition ease-in-out duration-300 transition 1s ease-in-out${clickedLike ? 'scale:150' : ''}`}
               alt="Next"
             />
             <img
