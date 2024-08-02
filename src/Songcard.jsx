@@ -50,7 +50,7 @@ export const Songcard = ({ code }) => {
     setClickedLike(true);
     setTimeout(() => setClickedLike(false), 1000);
 
-    setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
+    setTimeout (()=>setIndex((prevIndex) => (prevIndex + 1) % recommendations.length),);
   };
 
   const handleClick = () => {
@@ -103,7 +103,7 @@ export const Songcard = ({ code }) => {
 
       <div className={`aspect-[9/16] w-full max-w-xs rounded-full flex flex-col items-center relative pt-7 z-0 `}>
         {recommendations.length > 0 && (
-          <div key={currentTrack.id} className={`w-full h-full bg-white p-4 mb-4 rounded-xl shadow-xl relative transition ease-in-out ${clickedLike ? 'bg-red-400' : ''}`}>
+          <div key={currentTrack.id} className={`w-full h-full p-4 mb-4 rounded-xl shadow-xl relative transition ease-in-out ${clickedLike ? 'bg-red-400' : ''}`}>
             {songUrl ? (
               <a href={songUrl} target="_blank" rel="noopener noreferrer">
                 <div className='hover:scale-110 transition ease-in-out duration-1000 hover:bg-gray-100 p-5 rounded-xl'>
