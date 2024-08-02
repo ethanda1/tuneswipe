@@ -21,7 +21,7 @@ export const Songcard = ({ code }) => {
       const getRecommendations = async () => {
         try {
           spotifyApi.setAccessToken(accessToken);
-          const topTracks = await spotifyApi.getMyTopTracks({ limit: 5 });
+          const topTracks = await spotifyApi.getMyTopTracks({ limit: 10 });
           const seedTracks = topTracks.body.items.map(track => track.id);
           const response = await spotifyApi.getRecommendations({
             seed_tracks: seedTracks,
