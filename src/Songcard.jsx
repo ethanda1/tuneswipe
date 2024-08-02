@@ -9,7 +9,7 @@ export const Songcard = ({ code }) => {
   const [index, setIndex] = useState(0);
   const [likedSongs, setLikedSongs] = useState([]);
   const spotifyApi = new spotifyWebApi({
-    clientId: '6223f4e8625a427a83463c0ac5848388',
+    clientId: import.meta.env.CLIENT_ID,
   });
 
   useEffect(() => {
