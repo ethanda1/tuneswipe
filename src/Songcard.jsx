@@ -103,7 +103,7 @@ export const Songcard = ({ code }) => {
 
       <div className={`aspect-[9/16] w-full max-w-xs rounded-full flex flex-col items-center relative pt-7 z-0 `}>
         {recommendations.length > 0 && (
-          <div className={`z-30 opacity-0 rounded-xl transition 1s ease-in-out ${clickedLike ? 'bg-red-400 opacity-50' : ''}`}>
+          <div className={`z-30 w-full h-full p-4 mb-4 opacity-0 rounded-xl transition 1s ease-in-out ${clickedLike ? 'bg-red-400 opacity-50' : ''}`}>
           <div key={currentTrack.id} className={`w-full h-full p-4 mb-4 rounded-xl shadow-xl relative z-10`}>
             {songUrl ? (
               <a href={songUrl} target="_blank" rel="noopener noreferrer">
