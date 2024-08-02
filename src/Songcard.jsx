@@ -106,12 +106,12 @@ export const Songcard = ({ code }) => {
       ):null}
       </div>
 
-      <div className={`aspect-[9/16] w-full max-w-xs rounded-3xl flex flex-col items-center relative pt-7 z-0 transition 0.5s ease-in-out${clickedLike ? 'bg-red' : ''}`}>
+      <div className={`aspect-[9/16] w-full max-w-xs rounded-3xl flex flex-col items-center relative pt-7 z-0 transition ease-in-out ${clickedLike ? 'bg-red-200' : ''}`}>
         {recommendations.length > 0 && (
           <div key={currentTrack.id} className="w-full h-full bg-white p-4 mb-4 rounded-lg shadow-xl relative">
             {songUrl ? (
               <a href={songUrl} target="_blank" rel="noopener noreferrer">
-                <div className='hover:scale-150 transition ease-in-out duration-1000'>
+                <div className='hover:scale-110 transition ease-in-out duration-1000 bg-gray-100'>
                   {imageUrl && (
                     <img src={imageUrl} alt={currentTrack.name} className="w-full h-auto rounded-lg" />
                   )}
