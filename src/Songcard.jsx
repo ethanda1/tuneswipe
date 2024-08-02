@@ -109,14 +109,21 @@ export const Songcard = ({ code }) => {
             <div className={`absolute inset-0 bg-red-400 opacity-0 transition-opacity duration-300 rounded-xl ${clickedLike ? 'opacity-50' : ''}`}></div>
             {songUrl ? (
               <a href={songUrl} target="_blank" rel="noopener noreferrer" className="block relative z-20">
-                <div className="hover:scale-110 transition ease-in-out duration-1000 hover:bg-gray-100 p-5 text-nowra overflow-hidden">
+                <div className="hover:scale-110 transition ease-in-out duration-1000 hover:bg-gray-100 p-5 text-nowrap overflow-hidden">
                   {imageUrl && (
                     <img src={imageUrl} alt={currentTrack.name} className="w-full h-auto rounded-lg text-nowrap overflow-hidden" />
                   )}
-                  <div className="mt-4 text-lg font-semibold text-nowrap overflow-hidden">{currentTrack.name}</div>
-                  <div className="text-gray-600 text-nowrap overflow-hidden">
-                    {currentTrack.artists.map(artist => artist.name).join(', ')}
+                <div className="scrolling-container">
+                  <div className="scrolling-text">
+                    <div className="text">
+                      <div className="track-name">{currentTrack.name}</div>
+                      <div className="artist-names">
+                        {currentTrack.artists.map(artist => artist.name).join(', ')}
+                      </div>
+                    </div>
                   </div>
+                </div>
+
                 </div>
               </a>
             ) : (
