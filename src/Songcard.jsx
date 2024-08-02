@@ -109,12 +109,12 @@ export const Songcard = ({ code }) => {
             <div className={`absolute inset-0 bg-red-400 opacity-0 transition-opacity duration-300 rounded-xl ${clickedLike ? 'opacity-50' : ''}`}></div>
             {songUrl ? (
               <a href={songUrl} target="_blank" rel="noopener noreferrer" className="block relative z-20">
-                <div className="hover:scale-110 transition ease-in-out duration-1000 hover:bg-gray-100 p-5 text-nowrap">
+                <div className="hover:scale-110 transition ease-in-out duration-1000 hover:bg-gray-100 p-5 text-nowra overflow-hidden">
                   {imageUrl && (
-                    <img src={imageUrl} alt={currentTrack.name} className="w-full h-auto rounded-lg text-nowrap" />
+                    <img src={imageUrl} alt={currentTrack.name} className="w-full h-auto rounded-lg text-nowrap overflow-hidden" />
                   )}
-                  <div className="mt-4 text-lg font-semibold text-nowrap">{currentTrack.name}</div>
-                  <div className="text-gray-600 text-nowrap">
+                  <div className="mt-4 text-lg font-semibold text-nowrap overflow-hidden">{currentTrack.name}</div>
+                  <div className="text-gray-600 text-nowrap overflow-hidden">
                     {currentTrack.artists.map(artist => artist.name).join(', ')}
                   </div>
                 </div>
@@ -149,7 +149,7 @@ export const Songcard = ({ code }) => {
             <img
               src="/heart-logo-png-transparent.png"
               onClick={handleClickLike}
-              className={`absolute w-10 left-6 bottom-6 hover:scale-110 transition ease-in-out duration-300 z-20 ${clickedLike ? 'scale-150' : ''}`}
+              className={`absolute w-10 left-6 bottom-6 hover:scale-110 transition-scale ease-in-out duration-300 z-20 ${clickedLike ? 'scale-150' : ''}`}
               alt="Like"
             />
           </div>
