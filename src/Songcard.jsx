@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useAuth from './useAuth';
 import spotifyWebApi from 'spotify-web-api-node';
-import Player from './Player';
 
 export const Songcard = ({ code }) => {
   const accessToken = useAuth(code);
@@ -23,7 +22,6 @@ export const Songcard = ({ code }) => {
           spotifyApi.setAccessToken(accessToken);
           const topTracks = await spotifyApi.getMyTopTracks({ limit: 10 });
           const seedTracks = topTracks.body.items.map(track => track.id);
-          console.log(seedTracks);
           const response = await spotifyApi.getRecommendations({
             seed_tracks: seedTracks,
             limit: 100,
@@ -38,7 +36,7 @@ export const Songcard = ({ code }) => {
 
       getRecommendations();
     }
-  }, [accessToken]);
+  }, [accessToken, spotifyApi]);
 
   useEffect(() => {
     if (recommendations.length > 0 && !recommendations[index]?.preview_url) {
@@ -48,19 +46,20 @@ export const Songcard = ({ code }) => {
 
   const handleClickLike = async () => {
     if (likedSongs.includes(recommendations[index])) return;
-  
-    setLikedSongs((prevLikedSongs) => [...prevLikedSongs, recommendations[index]]);
-    
-    if ((likedSongs.length + 2) % 5 === 0 && (likedSongs.length < 100)) {
+
+    const newLikedSongs = [...likedSongs, recommendations[index]];
+    setLikedSongs(newLikedSongs);
+
+    if ((newLikedSongs.length + 2) % 5 === 0 && (newLikedSongs.length < 100)) {
       try {
-        const seedTracks = likedSongs.map(track => track.id);
+        const seedTracks = newLikedSongs.map(track => track.id);
         spotifyApi.setAccessToken(accessToken);
         const response = await spotifyApi.getRecommendations({
           seed_tracks: seedTracks,
           limit: 100,
         });
         setRecommendations(response.body.tracks);
-        console.log('New recommendations:', response.body.tracks);
+        localStorage.setItem('recommendations', JSON.stringify(response.body.tracks));
         setIndex(0);
       } catch (error) {
         console.error('Error getting new recommendations:', error);
@@ -68,6 +67,10 @@ export const Songcard = ({ code }) => {
     } else {
       setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
     }
+    setClickedLike(true);
+    setTimeout(() => setClickedLike(false), 1000); // Reset the like button state after 1 second
+  };
+
   const handleClick = () => {
     setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
   };
@@ -76,13 +79,13 @@ export const Songcard = ({ code }) => {
     try {
       spotifyApi.setAccessToken(accessToken);
       const user = await spotifyApi.getMe();
-      const playlist = await spotifyApi.createPlaylist(user.body.id, {
+      await spotifyApi.createPlaylist(user.body.id, {
         name: 'TuneSwipe Liked Songs',
         description: 'Playlist created with liked songs from TuneSwipe',
         public: false,
       });
     } catch (error) {
-      console.log('error creating playlist:', error);
+      console.log('Error creating playlist:', error);
     }
   };
 
@@ -97,8 +100,8 @@ export const Songcard = ({ code }) => {
   const songUrl = currentTrack?.external_urls?.spotify;
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray relative">
-      <div className='absolute left-10 top-10 z-50 shadow-md text-black bg-white font-semibold py-2 px-4 rounded w-auto ' >
+    <div className="flex items-center justify-center h-screen bg-gray-100 relative">
+      <div className='absolute left-10 top-10 z-50 shadow-md text-black bg-white font-semibold py-2 px-4 rounded w-auto'>
         <div 
           className={`text-2xl hover:animate-pulse ${clicked ? 'mb-5 border-b-2 border-black' : ''}`}
           onClick={handleClicked}
@@ -108,7 +111,7 @@ export const Songcard = ({ code }) => {
         {clicked && (
           likedSongs.map((track, idx) => (
             <div key={idx}>
-              <a href={track.uri} className='bg-white hover:bg-gray-200'>
+              <a href={track.external_urls.spotify} className='bg-white hover:bg-gray-200'>
                 <div className='z-50'>{track.name} <span className='font-normal'>by</span> {track.artists.map(artist => artist.name).join(', ')}</div>
               </a>
             </div>
@@ -116,7 +119,6 @@ export const Songcard = ({ code }) => {
         )}
       </div>
 
-      
       <div className="aspect-[9/16] w-full max-w-xs rounded-xl flex flex-col items-center relative pt-7 z-0">
         {recommendations.length > 0 && (
           <div className="w-full h-full p-4 mb-4 rounded-xl shadow-xl relative z-10">
