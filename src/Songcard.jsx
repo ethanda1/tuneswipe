@@ -51,6 +51,14 @@ export const Songcard = ({ code }) => {
     else{
       setLikedSongs((prevLikedSongs) => [...prevLikedSongs, recommendations[index]]);
     }
+    if (likedSongs.length == 5) {
+      const seedTracks = likedSongs.body.items.map(track => track.id);
+      const response = spotifyApi.getRecommendations({
+        seed_tracks: seedTracks,
+        limit: 100,
+      });
+      setRecommendations(response.body.tracks);
+    }
     setClickedLike(true);
     setTimeout(() => {
       setClickedLike(false);
