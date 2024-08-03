@@ -48,9 +48,10 @@ export const Songcard = ({ code }) => {
 
   const handleClickLike = async () => {
     if (likedSongs.includes(recommendations[index])) return;
-
+  
     setLikedSongs((prevLikedSongs) => [...prevLikedSongs, recommendations[index]]);
-    if (likedSongs.length % 5 === 0) {
+    
+    if ((likedSongs.length + 1) % 5 === 0) {
       try {
         const seedTracks = likedSongs.map(track => track.id);
         seedTracks.push(recommendations[index].id);
@@ -61,17 +62,13 @@ export const Songcard = ({ code }) => {
         });
         setRecommendations(response.body.tracks);
         console.log('New recommendations:', response.body.tracks);
+        setIndex(0);
       } catch (error) {
         console.error('Error getting new recommendations:', error);
       }
-    }
-    setClickedLike(true);
-    setTimeout(() => {
-      setClickedLike(false);
+    } else {
       setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
-    }, 1000);
-  };
-
+    }
   const handleClick = () => {
     setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
   };
