@@ -51,10 +51,9 @@ export const Songcard = ({ code }) => {
   
     setLikedSongs((prevLikedSongs) => [...prevLikedSongs, recommendations[index]]);
     
-    if ((likedSongs.length + 1) % 5 === 0) {
+    if ((likedSongs.length + 2) % 5 === 0 && (likedSongs.length < 100)) {
       try {
         const seedTracks = likedSongs.map(track => track.id);
-        seedTracks.push(recommendations[index].id);
         spotifyApi.setAccessToken(accessToken);
         const response = await spotifyApi.getRecommendations({
           seed_tracks: seedTracks,
