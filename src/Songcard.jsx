@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import useAuth from './useAuth';
 import spotifyWebApi from 'spotify-web-api-node';
+import Player from './Player';
 
 export const Songcard = ({ code }) => {
   const accessToken = useAuth(code);
@@ -22,6 +23,7 @@ export const Songcard = ({ code }) => {
           spotifyApi.setAccessToken(accessToken);
           const topTracks = await spotifyApi.getMyTopTracks({ limit: 10 });
           const seedTracks = topTracks.body.items.map(track => track.id);
+          console.log(seedTracks);
           const response = await spotifyApi.getRecommendations({
             seed_tracks: seedTracks,
             limit: 100,
@@ -36,7 +38,7 @@ export const Songcard = ({ code }) => {
 
       getRecommendations();
     }
-  }, [accessToken, spotifyApi]);
+  }, [accessToken]);
 
   useEffect(() => {
     if (recommendations.length > 0 && !recommendations[index]?.preview_url) {
@@ -44,50 +46,22 @@ export const Songcard = ({ code }) => {
     }
   }, [index, recommendations]);
 
-  const handleClickLike = async () => {
-    if (likedSongs.includes(recommendations[index])) return;
-
-    const newLikedSongs = [...likedSongs, recommendations[index]];
-    setLikedSongs(newLikedSongs);
-
-    if ((newLikedSongs.length + 2) % 5 === 0 && (newLikedSongs.length < 100)) {
-      try {
-        const seedTracks = newLikedSongs.map(track => track.id);
-        spotifyApi.setAccessToken(accessToken);
-        const response = await spotifyApi.getRecommendations({
-          seed_tracks: seedTracks,
-          limit: 100,
-        });
-        setRecommendations(response.body.tracks);
-        localStorage.setItem('recommendations', JSON.stringify(response.body.tracks));
-        setIndex(0);
-      } catch (error) {
-        console.error('Error getting new recommendations:', error);
-      }
-    } else {
-      setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
+  const handleClickLike = () => {
+    if (likedSongs.includes(recommendations[index])) {return;}
+    else{
+      setLikedSongs((prevLikedSongs) => [...prevLikedSongs, recommendations[index]]);
     }
     setClickedLike(true);
-    setTimeout(() => setClickedLike(false), 1000); // Reset the like button state after 1 second
+    setTimeout(() => {
+      setClickedLike(false);
+      setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
+    }, 1000);
   };
 
   const handleClick = () => {
     setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
   };
 
-  const createPlaylist = async () => {
-    try {
-      spotifyApi.setAccessToken(accessToken);
-      const user = await spotifyApi.getMe();
-      await spotifyApi.createPlaylist(user.body.id, {
-        name: 'TuneSwipe Liked Songs',
-        description: 'Playlist created with liked songs from TuneSwipe',
-        public: false,
-      });
-    } catch (error) {
-      console.log('Error creating playlist:', error);
-    }
-  };
 
   const [clicked, setClicked] = useState(false);
   const handleClicked = () => {
@@ -100,8 +74,8 @@ export const Songcard = ({ code }) => {
   const songUrl = currentTrack?.external_urls?.spotify;
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100 relative">
-      <div className='absolute left-10 top-10 z-50 shadow-md text-black bg-white font-semibold py-2 px-4 rounded w-auto'>
+    <div className="flex items-center justify-center h-screen bg-gray relative">
+      <div className='absolute left-10 top-10 z-50 shadow-md text-black bg-white font-semibold py-2 px-4 rounded w-auto ' >
         <div 
           className={`text-2xl hover:animate-pulse ${clicked ? 'mb-5 border-b-2 border-black' : ''}`}
           onClick={handleClicked}
@@ -111,7 +85,7 @@ export const Songcard = ({ code }) => {
         {clicked && (
           likedSongs.map((track, idx) => (
             <div key={idx}>
-              <a href={track.external_urls.spotify} className='bg-white hover:bg-gray-200'>
+              <a href={track.uri} className='bg-white hover:bg-gray-200'>
                 <div className='z-50'>{track.name} <span className='font-normal'>by</span> {track.artists.map(artist => artist.name).join(', ')}</div>
               </a>
             </div>
@@ -119,6 +93,7 @@ export const Songcard = ({ code }) => {
         )}
       </div>
 
+      
       <div className="aspect-[9/16] w-full max-w-xs rounded-xl flex flex-col items-center relative pt-7 z-0">
         {recommendations.length > 0 && (
           <div className="w-full h-full p-4 mb-4 rounded-xl shadow-xl relative z-10">
@@ -149,7 +124,7 @@ export const Songcard = ({ code }) => {
             <div className="flex flex-col items-center justify-content relative z-20">
               <div className="flex flex-col text-xs items-center justify-center"></div>
               {previewUrl ? (
-                <audio controls src={previewUrl} autoPlay className="absolute top-3.5 bg-transparent" loop>
+                <audio controls src={previewUrl} autoPlay className="absolute top-5 bg-transparent" loop>
                   Your browser does not support the audio element.
                 </audio>
               ) : (
@@ -165,7 +140,7 @@ export const Songcard = ({ code }) => {
             <img
               src="/heart-logo-png-transparent.png"
               onClick={handleClickLike}
-              className={`absolute w-10 left-6 bottom-6 hover:w-12 transition-scale ease-in-out duration-300 z-20 ${clickedLike ? 'scale-150' : ''}`}
+              className={`absolute w-10 left-6 bottom-6 hover:w-11 transition-scale ease-in-out duration-300 z-20 ${clickedLike ? 'scale-150' : ''}`}
               alt="Like"
             />
           </div>
