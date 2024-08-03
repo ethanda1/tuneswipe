@@ -49,11 +49,12 @@ export const Songcard = ({ code }) => {
 
   const handleClickLike = async () => {
     if (likedSongs.includes(recommendations[index])) return;
-  
-    setLikedSongs((prevLikedSongs) => [...prevLikedSongs, recommendations[index]]);
-  
-    if ((likedSongs.length + 1) % 5 === 0 && index < 100 && likedSongs.length < 100) {
-      const seedTracks = likedSongs.map(track => track.id);
+
+    const updatedLikedSongs = [...likedSongs, recommendations[index]];
+    setLikedSongs(updatedLikedSongs);
+
+    if ((updatedLikedSongs.length) % 5 === 0 && index < 100 && updatedLikedSongs.length < 100) {
+      const seedTracks = updatedLikedSongs.map(track => track.id);
       try {
         spotifyApi.setAccessToken(accessToken);
         const response = await spotifyApi.getRecommendations({
@@ -71,7 +72,8 @@ export const Songcard = ({ code }) => {
         console.error('Error getting new recommendations:', error);
       }
     } else {
-      setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
+      setTimeout(() => {
+      setIndex((prevIndex) => (prevIndex + 1) % recommendations.length)}, 1000);
     }
   
     setClickedLike(true);
