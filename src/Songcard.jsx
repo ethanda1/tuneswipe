@@ -51,6 +51,7 @@ export const Songcard = ({ code }) => {
     else{
       setLikedSongs((prevLikedSongs) => [...prevLikedSongs, recommendations[index]]);
     }
+
     setClickedLike(true);
     setTimeout(() => {
       setClickedLike(false);
@@ -85,8 +86,8 @@ export const Songcard = ({ code }) => {
         {clicked && (
           likedSongs.map((track, idx) => (
             <div key={idx}>
-              <a href={track.uri} className='bg-white hover:bg-gray-200'>
-                <div className='z-50'>{track.name} <span className='font-normal'>by</span> {track.artists.map(artist => artist.name).join(', ')}</div>
+              <a href={track.uri} className='bg-white '>
+                <div className='z-50 hover:bg-gray-200'>{track.name} <span className='font-normal'>by</span> {track.artists.map(artist => artist.name).join(', ')}</div>
               </a>
             </div>
           ))
@@ -100,7 +101,7 @@ export const Songcard = ({ code }) => {
             <div className={`absolute inset-0 bg-red-400 opacity-0 transition-opacity duration-300 rounded-xl ${clickedLike ? 'opacity-50' : ''}`}></div>
             {songUrl ? (
               <a href={songUrl} target="_blank" rel="noopener noreferrer" className="block relative z-20">
-                <div className="hover:scale-110 transition ease-in-out duration-1000 hover:bg-gray-100 p-5 text-nowrap overflow-hidden">
+                <div className="hover:scale-110 transition ease-in-out duration-1000 p-5 text-nowrap overflow-hidden">
                   {imageUrl && (
                     <img src={imageUrl} alt={currentTrack.name} className="w-full h-auto rounded-lg text-nowrap overflow-hidden" />
                   )}
@@ -124,7 +125,7 @@ export const Songcard = ({ code }) => {
             <div className="flex flex-col items-center justify-content relative z-20">
               <div className="flex flex-col text-xs items-center justify-center"></div>
               {previewUrl ? (
-                <audio controls src={previewUrl} autoPlay className="absolute top-5 bg-transparent" loop>
+                <audio controls src={previewUrl} autoPlay className="absolute top-3.5 bg-transparent" loop>
                   Your browser does not support the audio element.
                 </audio>
               ) : (
