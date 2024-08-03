@@ -94,7 +94,7 @@ export const Songcard = ({ code }) => {
         {clicked && (
           likedSongs.map((track, idx) => (
             <div key={idx}>
-              <a href={track.uri} className='hover:animate-pulse'>
+              <a href={track.uri} className='hover:bg-gray-200'>
                 <div className='z-50'>{track.name} <span className='font-normal'>by</span> {track.artists.map(artist => artist.name).join(', ')}</div>
               </a>
             </div>
