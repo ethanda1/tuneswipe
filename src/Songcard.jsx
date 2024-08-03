@@ -50,17 +50,17 @@ export const Songcard = ({ code }) => {
     if (likedSongs.includes(recommendations[index])) return;
 
     setLikedSongs((prevLikedSongs) => [...prevLikedSongs, recommendations[index]]);
-    if (likedSongs.length + 1 === 5) {
+    if (likedSongs.length % 5 === 0) {
       try {
         const seedTracks = likedSongs.map(track => track.id);
-        seedTracks.push(recommendations[index].id); // Add the current liked song to the seeds
+        seedTracks.push(recommendations[index].id);
         spotifyApi.setAccessToken(accessToken);
         const response = await spotifyApi.getRecommendations({
           seed_tracks: seedTracks,
           limit: 100,
         });
         setRecommendations(response.body.tracks);
-        setLikedSongs([]); // Reset liked songs after fetching new recommendations
+        console.log('New recommendations:', response.body.tracks);
       } catch (error) {
         console.error('Error getting new recommendations:', error);
       }
