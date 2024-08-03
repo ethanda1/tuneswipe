@@ -150,14 +150,12 @@ export const Songcard = ({ code }) => {
               className="absolute w-10 right-6 bottom-6 hover:scale-110 transition ease-in-out duration-300 z-20"
               alt="Next"
             />
-            <div className={`transition-scale ease-in-out duration-300 ${clickedLike ? 'scale-150' : ''}`}>
             <img
               src="/heart-logo-png-transparent.png"
               onClick={handleClickLike}
-              className={`absolute w-10 left-6 bottom-6 hover:scale-110 transition-scale ease-in-out duration-300 z-20 `}
+              className={`absolute w-10 left-6 bottom-6 hover:w-12 transition-scale ease-in-out duration-300 z-20 ${clickedLike ? 'scale-150' : ''}`}
               alt="Like"
             />
-            </div>
           </div>
         )}
       </div>
