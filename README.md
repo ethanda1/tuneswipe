@@ -1,2 +1,1 @@
-Song Tinder App 
-
+TuneSwipe. Making music discovery easier. Swipe through your Spotify recommendations.
