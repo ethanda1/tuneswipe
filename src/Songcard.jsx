@@ -46,7 +46,10 @@ export const Songcard = ({ code }) => {
   }, [index, recommendations]);
 
   const handleClickLike = () => {
-    setLikedSongs((prevLikedSongs) => [...prevLikedSongs, recommendations[index]]);
+    if (likedSongs.includes(recommendations[index])) {return;}
+    else{
+      setLikedSongs((prevLikedSongs) => [...prevLikedSongs, recommendations[index]]);
+    }
     setClickedLike(true);
     setTimeout(() => {
       setClickedLike(false);
@@ -94,7 +97,7 @@ export const Songcard = ({ code }) => {
         {clicked && (
           likedSongs.map((track, idx) => (
             <div key={idx}>
-              <a href={track.uri} className='hover:bg-gray-200'>
+              <a href={track.uri} className='bg-white hover:bg-gray-200'>
                 <div className='z-50'>{track.name} <span className='font-normal'>by</span> {track.artists.map(artist => artist.name).join(', ')}</div>
               </a>
             </div>
