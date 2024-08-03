@@ -9,8 +9,10 @@ export const Songcard = ({ code }) => {
   const [index, setIndex] = useState(0);
   const [likedSongs, setLikedSongs] = useState([]);
   const [clickedLike, setClickedLike] = useState(false);
+  const [clicked, setClicked] = useState(false);
+
   const spotifyApi = new spotifyWebApi({
-    clientId: import.meta.env.CLIENT_ID,
+    clientId: import.meta.env.VITE_CLIENT_ID,
   });
 
   useEffect(() => {
@@ -23,7 +25,6 @@ export const Songcard = ({ code }) => {
           spotifyApi.setAccessToken(accessToken);
           const topTracks = await spotifyApi.getMyTopTracks({ limit: 10 });
           const seedTracks = topTracks.body.items.map(track => track.id);
-          console.log(seedTracks);
           const response = await spotifyApi.getRecommendations({
             seed_tracks: seedTracks,
             limit: 100,
@@ -38,7 +39,7 @@ export const Songcard = ({ code }) => {
 
       getRecommendations();
     }
-  }, [accessToken]);
+  }, [accessToken, spotifyApi]);
 
   useEffect(() => {
     if (recommendations.length > 0 && !recommendations[index]?.preview_url) {
@@ -46,41 +47,38 @@ export const Songcard = ({ code }) => {
     }
   }, [index, recommendations]);
 
-  const handleClickLike = () => {
-    if (likedSongs.includes(recommendations[index])) {return;}
-    else{
-      setLikedSongs((prevLikedSongs) => [...prevLikedSongs, recommendations[index]]);
-    }
-    if (((likedSongs.length + 1) % 5 === 0) && (index < 100)) {
+  const handleClickLike = async () => {
+    if (likedSongs.includes(recommendations[index])) return;
+
+    setLikedSongs((prevLikedSongs) => [...prevLikedSongs, recommendations[index]]);
+
+    if ((likedSongs.length + 1) % 5 === 0 && index < 100) {
       const seedTracks = likedSongs.map(track => track.id);
-      const response = spotifyApi.getRecommendations({
-        seed_tracks: seedTracks,
-        limit: 100,
-      });
-      
-      setTimeout(() => {
+      try {
+        const response = await spotifyApi.getRecommendations({
+          seed_tracks: seedTracks,
+          limit: 100,
+        });
+
         setIndex(0);
         setRecommendations(response.body.tracks);
-      }, 1000);
-      console.log('Recommend' + response.body.tracks.name);
+      } catch (error) {
+        console.error('Error getting new recommendations:', error);
+      }
+    } else {
+      setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
     }
-    else{
-      setTimeout(() => {
-        setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
-      }, 1000);
-    };
+
     setClickedLike(true);
     setTimeout(() => {
       setClickedLike(false);
     }, 1000);
-    }
+  };
 
   const handleClick = () => {
     setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
   };
 
-
-  const [clicked, setClicked] = useState(false);
   const handleClicked = () => {
     setClicked(!clicked);
   };
@@ -92,7 +90,7 @@ export const Songcard = ({ code }) => {
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray relative">
-      <div className='absolute left-10 top-10 z-50 shadow-md text-black bg-white font-semibold py-2 px-4 rounded w-auto ' >
+      <div className='absolute left-10 top-10 z-50 shadow-md text-black bg-white font-semibold py-2 px-4 rounded w-auto'>
         <div 
           className={`text-2xl hover:animate-pulse ${clicked ? 'mb-5 border-b-2 border-black' : ''}`}
           onClick={handleClicked}
@@ -102,14 +100,13 @@ export const Songcard = ({ code }) => {
         {clicked && (
           likedSongs.map((track, idx) => (
             <div key={idx}>
-              <a href={track.uri} className='bg-white '>
+              <a href={track.uri} className='bg-white'>
                 <div className='z-50 hover:bg-gray-200'>{track.name} <span className='font-normal'>by</span> {track.artists.map(artist => artist.name).join(', ')}</div>
               </a>
             </div>
           ))
         )}
       </div>
-
       
       <div className="aspect-[9/16] w-full max-w-xs rounded-xl flex flex-col items-center relative pt-7 z-0">
         {recommendations.length > 0 && (
