@@ -46,18 +46,24 @@ export const Songcard = ({ code }) => {
     }
   }, [index, recommendations]);
 
-  const handleClickLike = () => {
-    if (likedSongs.includes(recommendations[index])) {return;}
-    else{
-      setLikedSongs((prevLikedSongs) => [...prevLikedSongs, recommendations[index]]);
-    }
-    if (likedSongs.length == 5) {
-      const seedTracks = likedSongs.map(track => track.id);
-      const response = spotifyApi.getRecommendations({
-        seed_tracks: seedTracks,
-        limit: 100,
-      });
-      setRecommendations(response.body.tracks);
+  const handleClickLike = async () => {
+    if (likedSongs.includes(recommendations[index])) return;
+
+    setLikedSongs((prevLikedSongs) => [...prevLikedSongs, recommendations[index]]);
+    if (likedSongs.length + 1 === 5) {
+      try {
+        const seedTracks = likedSongs.map(track => track.id);
+        seedTracks.push(recommendations[index].id); // Add the current liked song to the seeds
+        spotifyApi.setAccessToken(accessToken);
+        const response = await spotifyApi.getRecommendations({
+          seed_tracks: seedTracks,
+          limit: 100,
+        });
+        setRecommendations(response.body.tracks);
+        setLikedSongs([]); // Reset liked songs after fetching new recommendations
+      } catch (error) {
+        console.error('Error getting new recommendations:', error);
+      }
     }
     setClickedLike(true);
     setTimeout(() => {
