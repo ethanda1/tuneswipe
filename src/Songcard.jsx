@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useAuth from './useAuth';
-import spotifyWebApi from 'spotify-web-api-node';
+import SpotifyWebApi from 'spotify-web-api-node';
 import Player from './Player';
 
 export const Songcard = ({ code }) => {
@@ -11,7 +11,7 @@ export const Songcard = ({ code }) => {
   const [clickedLike, setClickedLike] = useState(false);
   const [clicked, setClicked] = useState(false);
 
-  const spotifyApi = new spotifyWebApi({
+  const spotifyApi = new SpotifyWebApi({
     clientId: import.meta.env.VITE_CLIENT_ID,
   });
 
@@ -55,6 +55,7 @@ export const Songcard = ({ code }) => {
     if ((likedSongs.length + 1) % 5 === 0 && index < 100) {
       const seedTracks = likedSongs.map(track => track.id);
       try {
+        spotifyApi.setAccessToken(accessToken);  // Ensure the token is set before making the request
         const response = await spotifyApi.getRecommendations({
           seed_tracks: seedTracks,
           limit: 100,
