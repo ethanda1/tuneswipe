@@ -52,17 +52,20 @@ export const Songcard = ({ code }) => {
   
     setLikedSongs((prevLikedSongs) => [...prevLikedSongs, recommendations[index]]);
   
-    if ((likedSongs.length + 1) % 5 === 0 && index < 100) {
+    if ((likedSongs.length + 1) % 5 === 0 && index < 100 && likedSongs.length < 100) {
       const seedTracks = likedSongs.map(track => track.id);
       try {
-        spotifyApi.setAccessToken(accessToken);  // Ensure the token is set before making the request
+        spotifyApi.setAccessToken(accessToken);
         const response = await spotifyApi.getRecommendations({
-          seed_tracks: seedTracks.join(','),  // Ensure seed_tracks is a comma-separated string of track IDs
+          seed_tracks: seedTracks.join(','),  
           limit: 100,
         });
-  
-        setIndex(0);
-        setRecommendations(response.body.tracks);
+        setClickedLike(true);
+        setTimeout(() => {
+          setRecommendations(response.body.tracks);
+          setIndex(0);
+        }, 1000);
+
         localStorage.setItem('recommendations', JSON.stringify(response.body.tracks));
       } catch (error) {
         console.error('Error getting new recommendations:', error);
