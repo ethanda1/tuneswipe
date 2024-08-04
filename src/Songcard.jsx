@@ -9,9 +9,6 @@ import '@fontsource/roboto/700.css';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { useSwipeable } from 'react-swipeable';
-import { useSprings, animated, to as interpolate } from '@react-spring/web'
-import { useDrag } from 'react-use-gesture'
 
 export const Songcard = ({ code }) => {
   const accessToken = useAuth(code);
@@ -107,10 +104,6 @@ export const Songcard = ({ code }) => {
   const previewUrl = currentTrack?.preview_url;
   const songUrl = currentTrack?.external_urls?.spotify;
 
-  const handlers = useSwipeable({
-    onSwipedLeft: handleSwipeLeft,
-    onSwipedRight: handleSwipeRight,
-  });
 
   return (
     <div className='static'>
@@ -128,7 +121,7 @@ export const Songcard = ({ code }) => {
         ))}
       </div>
   
-      <div {...handlers} className="h-screen bg-gray absolute left-1/2">
+      <div className="h-screen bg-gray absolute left-1/2">
         <div className="aspect-[9/16] w-full max-w-xs rounded-xl flex flex-col items-center relative pt-7 z-0">
           {recommendations.length > 0 && (
             <div className="w-full h-full p-4 mb-4 rounded-xl shadow-xl relative z-10">
