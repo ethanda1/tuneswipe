@@ -59,10 +59,9 @@ export const Songcard = ({ code }) => {
   }, [recommendations, api])
 
   const bind = useDrag(({ args: [index], down, movement: [mx], direction: [xDir], velocity }) => {
-    const trigger = velocity > 0.2
     const dir = xDir < 0 ? -1 : 1
-    console.log('Drag detected:', { down, mx, xDir, velocity, trigger, dir });
-    if (!down && trigger) {
+    console.log('Drag detected:', { down, mx, xDir, velocity,  dir });
+    if (!down) {
       gone.add(index)
       if (dir === 1) {
         handleLike(index)
@@ -106,7 +105,15 @@ export const Songcard = ({ code }) => {
   return (
     <div className="flex h-screen">
       <div className="w-1/4 overflow-y-auto overflow-x-hidden">
-        {/* ... (keep your existing liked songs list) */}
+      {likedSongs.map((track) => (
+  <div key={track.id}>
+    <h2>{track.name}</h2>
+    <p>{track.artists.map((artist, index) => (
+      <span key={index}>{artist}{index < track.artists.length - 1 ? ', ' : ''}</span>
+    ))}</p>
+  </div>
+))}
+
       </div>
   
       <div className="flex-grow flex items-center justify-center relative">
