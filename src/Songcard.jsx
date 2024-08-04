@@ -117,20 +117,21 @@ export const Songcard = ({ code }) => {
 
   return (
     <>
-      <div className='w-1/4 flex flex-col'>
+    <div className="w-1/4 flex flex-col overflow-y-auto max-h-screen">
       {likedSongs.map((track, idx) => (
-          <a href={track?.album?.images?.[0]?.url} className='hover:bg-gray-200 p-5'>
-            <div className='flex flex-row'>
-            <img src={track?.album?.images?.[0]?.url} alt={track.name} className="w-12 h-12" />
-            <div className='flex flex-col justify-evenly'>
-            <span className='font-bold'>{track.name}</span>
-            <span className='font-normal'>{track.artists.map(artist => artist.name).join(', ')}</span>
+        <a key={idx} href={track?.album?.images?.[0]?.url} className="hover:bg-gray-200 p-2">
+          <div className="flex flex-row items-center">
+            <img src={track?.album?.images?.[0]?.url} alt={track.name} className="w-12 h-12 rounded-lg" />
+            <div className="flex flex-col ml-2">
+              <span className="font-bold">{track.name}</span>
+              <span className="font-normal">{track.artists.map(artist => artist.name).join(', ')}</span>
             </div>
-            </div>
-            </a>))}
-
-      </div>
-      <div className="flex items-center justify-center h-screen bg-gray relative">
+          </div>
+        </a>
+      ))}
+    </div>
+  
+    <div className="flex items-center justify-center h-screen bg-gray relative">
       <div className="aspect-[9/16] w-full max-w-xs rounded-xl flex flex-col items-center relative pt-7 z-0">
         {recommendations.length > 0 && (
           <div className="w-full h-full p-4 mb-4 rounded-xl shadow-xl relative z-10">
@@ -184,6 +185,6 @@ export const Songcard = ({ code }) => {
         )}
       </div>
     </div>
-    </>
+  </>
   );
 };
