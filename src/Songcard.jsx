@@ -118,12 +118,6 @@ export const Songcard = ({ code }) => {
   return (
     <div className="flex items-center justify-center h-screen bg-gray relative">
       <div className='absolute left-10 top-10 z-50 shadow-md text-black bg-white font-semibold py-2 px-4 rounded w-auto'>
-        <div 
-          className={`text-2xl hover:animate-pulse ${clicked ? 'mb-5 border-b-2 border-black' : ''}`}
-          onClick={handleClicked}
-        >
-          Liked Songs
-        </div>
         <Button
           id="basic-button"
           aria-controls={open ? 'basic-menu' : undefined}
@@ -131,7 +125,7 @@ export const Songcard = ({ code }) => {
           aria-expanded={open ? 'true' : undefined}
           onClick={handleClickDash}
         >
-          Dashboard
+          Liked Songs
         </Button>
         <Menu
           id="basic-menu"
@@ -142,16 +136,14 @@ export const Songcard = ({ code }) => {
             'aria-labelledby': 'basic-button',
           }}
         >
-          <MenuItem onClick={handleClose}>Profile</MenuItem>
-          <MenuItem onClick={handleClose}>My account</MenuItem>
-          <MenuItem onClick={handleClose}>Logout</MenuItem>
-        </Menu>
         
         {likedSongs.map((track, idx) => (
           <MenuItem key={idx} onClick={handleClose}>
-            <a href={track.url}>{track.name} by {track.artists.map(artist => artist.name).join(', ')}</a>
+            <a href={track.url}><span className='font-bold'>{track.name} </span> by <span className='font-bold'>{track.artists.map(artist => artist.name).join(', ')}</span></a>
           </MenuItem>
         ))}
+        </Menu>
+
       </div>
       
       <div className="aspect-[9/16] w-full max-w-xs rounded-xl flex flex-col items-center relative pt-7 z-0">
