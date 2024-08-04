@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import useAuth from './useAuth';
 import SpotifyWebApi from 'spotify-web-api-node';
 import { useSprings, animated, to as interpolate } from '@react-spring/web'
-import { useDrag } from 'react-use-gesture'
+import { useDrag } from '@use-gesture/react'
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
