@@ -34,10 +34,8 @@ export const Songcard = ({ code }) => {
   };
 
   useEffect(() => {
-    const storedRecommendations = localStorage.getItem('recommendations');
-    if (storedRecommendations) {
-      setRecommendations(JSON.parse(storedRecommendations));
-    } else if (accessToken) {
+
+    if (accessToken) {
       const getRecommendations = async () => {
         try {
           spotifyApi.setAccessToken(accessToken);
@@ -49,7 +47,6 @@ export const Songcard = ({ code }) => {
           });
 
           setRecommendations(response.body.tracks);
-          localStorage.setItem('recommendations', JSON.stringify(response.body.tracks));
         } catch (error) {
           console.error('Error getting recommendations:', error);
         }
@@ -112,7 +109,7 @@ export const Songcard = ({ code }) => {
         {likedSongs.map((track, idx) => (
           <a key={idx} href={track?.external_urls?.spotify} className="">
             <div className="flex flex-row items-center hover:bg-gray-200">
-              <img src={track?.album?.images?.[0]?.url} alt={track.name} className="w-12 h-12 rounded-lg" />
+              <img src={track?.album?.images?.[0]?.url} alt={track.name} className="w-12 h-12 rounded-lg" id='song-img' />
               <div className="flex flex-col ml-2">
                 <span className="font-bold">{track.name}</span>
                 <span className="font-normal">{track.artists.map(artist => artist.name).join(', ')}</span>
