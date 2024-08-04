@@ -54,13 +54,15 @@ export const Songcard = ({ code }) => {
   }))
 
   useEffect(() => {
+    console.log('Recommendations updated:', recommendations);
     api.start(i => to(i))
   }, [recommendations, api])
 
-  const bind = useDrag(({ args: [index], down, movement: [mx], direction: [xDir], velocity }) => {
+  const bind = useDrag(({ args: [index], active, movement: [mx], direction: [xDir], velocity }) => {
     const trigger = velocity > 0.2
     const dir = xDir < 0 ? -1 : 1
-    if (!down && trigger) {
+    console.log('Drag detected:', { active, mx, xDir, velocity, trigger, dir });
+    if (!active && trigger) {
       gone.add(index)
       if (dir === 1) {
         handleLike(index)
@@ -71,18 +73,19 @@ export const Songcard = ({ code }) => {
     api.start(i => {
       if (index !== i) return
       const isGone = gone.has(index)
-      const x = isGone ? (200 + window.innerWidth) * dir : down ? mx : 0
+      const x = isGone ? (200 + window.innerWidth) * dir : active ? mx : 0
       const rot = mx / 100 + (isGone ? dir * 10 * velocity : 0)
-      const scale = down ? 1.1 : 1
+      const scale = active ? 1.1 : 1
+      console.log('Updating spring:', { index: i, x, rot, scale });
       return {
         x,
         rot,
         scale,
         delay: undefined,
-        config: { friction: 50, tension: down ? 800 : isGone ? 200 : 500 },
+        config: { friction: 50, tension: active ? 800 : isGone ? 200 : 500 },
       }
     })
-    if (!down && gone.size === recommendations.length) {
+    if (!active && gone.size === recommendations.length) {
       setTimeout(() => {
         gone.clear()
         api.start(i => to(i))
@@ -91,24 +94,19 @@ export const Songcard = ({ code }) => {
   })
 
   const handleLike = (index) => {
+    console.log('Liked song:', recommendations[index]);
     const likedSong = recommendations[index];
     setLikedSongs(prev => [...prev, likedSong]);
+  }
+
+  const handleSkip = (index) => {
+    console.log('Skipped song:', recommendations[index]);
   }
 
   return (
     <div className="flex h-screen">
       <div className="w-1/4 overflow-y-auto overflow-x-hidden">
-        {likedSongs.map((track, idx) => (
-          <a key={idx} href={track?.external_urls?.spotify} target="_blank" rel="noopener noreferrer" className="hover:bg-gray-200 p-2 block">
-            <div className="flex flex-row items-center">
-              <img src={track?.album?.images?.[0]?.url} alt={track.name} className="w-12 h-12 rounded-lg" />
-              <div className="flex flex-col ml-2">
-                <span className="font-bold truncate">{track.name}</span>
-                <span className="font-normal truncate">{track.artists.map(artist => artist.name).join(', ')}</span>
-              </div>
-            </div>
-          </a>
-        ))}
+        {/* ... (keep your existing liked songs list) */}
       </div>
   
       <div className="flex-grow flex items-center justify-center relative">
@@ -121,13 +119,14 @@ export const Songcard = ({ code }) => {
             <animated.div
               key={i}
               style={{ x, y }}
-              className="absolute w-64 h-96 will-change-transform"
+              className="absolute w-64 h-96 will-change-transform cursor-grab"
             >
               <animated.div
                 {...bind(i)}
                 style={{
                   transform: interpolate([rot, scale], trans),
                   backgroundImage: `url(${imageUrl})`,
+                  touchAction: 'none',
                 }}
                 className="w-full h-full touch-none bg-white bg-center bg-cover rounded-xl shadow-xl"
               >
