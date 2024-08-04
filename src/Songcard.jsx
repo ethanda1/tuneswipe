@@ -58,11 +58,11 @@ export const Songcard = ({ code }) => {
     api.start(i => to(i))
   }, [recommendations, api])
 
-  const bind = useDrag(({ args: [index], active, movement: [mx], direction: [xDir], velocity }) => {
+  const bind = useDrag(({ args: [index], down, movement: [mx], direction: [xDir], velocity }) => {
     const trigger = velocity > 0.2
     const dir = xDir < 0 ? -1 : 1
-    console.log('Drag detected:', { active, mx, xDir, velocity, trigger, dir });
-    if (!active && trigger) {
+    console.log('Drag detected:', { down, mx, xDir, velocity, trigger, dir });
+    if (!down && trigger) {
       gone.add(index)
       if (dir === 1) {
         handleLike(index)
@@ -73,19 +73,19 @@ export const Songcard = ({ code }) => {
     api.start(i => {
       if (index !== i) return
       const isGone = gone.has(index)
-      const x = isGone ? (200 + window.innerWidth) * dir : active ? mx : 0
+      const x = isGone ? (200 + window.innerWidth) * dir : down ? mx : 0
       const rot = mx / 100 + (isGone ? dir * 10 * velocity : 0)
-      const scale = active ? 1.1 : 1
+      const scale = down ? 1.1 : 1
       console.log('Updating spring:', { index: i, x, rot, scale });
       return {
         x,
         rot,
         scale,
         delay: undefined,
-        config: { friction: 50, tension: active ? 800 : isGone ? 200 : 500 },
+        config: { friction: 50, tension: down ? 800 : isGone ? 200 : 500 },
       }
     })
-    if (!active && gone.size === recommendations.length) {
+    if (!down && gone.size === recommendations.length) {
       setTimeout(() => {
         gone.clear()
         api.start(i => to(i))
