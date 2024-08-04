@@ -23,6 +23,7 @@ export const Songcard = ({ code }) => {
   const [likedSongs, setLikedSongs] = useState([]);
   const [gone] = useState(() => new Set());
   const [initialLoad, setInitialLoad] = useState(true);  // Track initial load state
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(null);  // Track index for playing audio
 
   const spotifyApi = new SpotifyWebApi({
     clientId: import.meta.env.VITE_CLIENT_ID,
@@ -85,6 +86,9 @@ export const Songcard = ({ code }) => {
       const isGone = gone.has(index);
       const x = isGone ? (200 + window.innerWidth) * dir : down ? mx : 0;
       const scale = down ? 1.1 : 1;
+      if (i === index) {
+        setCurrentTrackIndex(isGone ? null : index);  // Update current track index
+      }
       return {
         x,
         scale,
