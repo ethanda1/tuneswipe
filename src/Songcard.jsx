@@ -1,4 +1,4 @@
-
+import React, { useState, useEffect } from 'react';
 import useAuth from './useAuth';
 import SpotifyWebApi from 'spotify-web-api-node';
 import Player from './Player';
@@ -6,7 +6,6 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import * as React from 'react';
 import Button from '@mui/material/Button';
 
 
