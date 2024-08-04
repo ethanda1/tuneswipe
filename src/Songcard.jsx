@@ -110,8 +110,8 @@ export const Songcard = ({ code }) => {
   });
 
   return (
-    <div className='flex flex-row'>
-      <div className="w-1/4 flex flex-col overflow-y-auto max-h-screen">
+    <div className='relative'>
+      <div className="w-1/2 left-0 overflow-y-auto max-h-screen absolute ">
         {likedSongs.map((track, idx) => (
           <a key={idx} href={track?.album?.images?.[0]?.url} className="hover:bg-gray-200 p-2">
             <div className="flex flex-row items-center">
@@ -125,7 +125,7 @@ export const Songcard = ({ code }) => {
         ))}
       </div>
   
-      <div {...handlers} className="flex items-center justify-center h-screen bg-gray">
+      <div {...handlers} className="h-screen bg-gray absolute top-1/2 left-1/2">
         <div className="aspect-[9/16] w-full max-w-xs rounded-xl flex flex-col items-center relative pt-7 z-0">
           {recommendations.length > 0 && (
             <div className="w-full h-full p-4 mb-4 rounded-xl shadow-xl relative z-10">
