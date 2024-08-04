@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import useAuth from './useAuth';
 import SpotifyWebApi from 'spotify-web-api-node';
-import { useSprings, animated } from '@react-spring/web'
-import { useDrag } from '@use-gesture/react'
+import { useSprings, animated } from '@react-spring/web';
+import { useDrag } from '@use-gesture/react';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
-const to = (i) => ({ x: 0, y: i * -4, scale: 1, rot: -10 + Math.random() * 20, delay: i * 100 });
+const to = (i, isInitialLoad) => ({
+  x: 0,
+  y: 0,
+  scale: isInitialLoad ? 1 : 1,  // Maintain scale without animation initially
+  rot: -10 + Math.random() * 20,
+  delay: isInitialLoad ? 0 : i * 100,
+});
 const from = (_i) => ({ x: 0, rot: 0, scale: 1.5, y: -1000 });
 
 export const Songcard = ({ code }) => {
@@ -16,7 +22,7 @@ export const Songcard = ({ code }) => {
   const [recommendations, setRecommendations] = useState([]);
   const [likedSongs, setLikedSongs] = useState([]);
   const [gone] = useState(() => new Set());
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(null);
+  const [initialLoad, setInitialLoad] = useState(true);  // Track initial load state
 
   const spotifyApi = new SpotifyWebApi({
     clientId: import.meta.env.VITE_CLIENT_ID,
@@ -49,13 +55,24 @@ export const Songcard = ({ code }) => {
   }, [accessToken, spotifyApi]);
 
   const [props, api] = useSprings(recommendations.length, i => ({
-    ...to(i),
+    ...to(i, initialLoad),
     from: from(i),
   }));
 
+  useEffect(() => {
+    if (initialLoad) {
+      setInitialLoad(false);  // Disable initial load animation after mounting
+      setTimeout(() => {
+        api.start(i => to(i, false));
+      }, 100);  // Short delay to ensure the initial load state is applied
+    } else {
+      api.start(i => to(i, false));
+    }
+  }, [initialLoad, recommendations, api]);
+
   const bind = useDrag(({ args: [index], down, movement: [mx], direction: [xDir], velocity }) => {
     const dir = xDir < 0 ? -1 : 1;
-    if (!down && Math.abs(mx) > 50) {  
+    if (!down && Math.abs(mx) > 50) {
       gone.add(index);
       if (dir === 1) {
         handleLike(index);
@@ -90,11 +107,6 @@ export const Songcard = ({ code }) => {
   const handleSkip = (index) => {
     console.log('Skipped song:', recommendations[index]);
   }
-
-  useEffect(() => {
-    const visibleIndex = recommendations.findIndex((_, index) => !gone.has(index));
-    setCurrentTrackIndex(visibleIndex);
-  }, [gone, recommendations]);
 
   return (
     <div className="flex h-screen">
