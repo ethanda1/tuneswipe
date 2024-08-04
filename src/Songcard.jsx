@@ -116,12 +116,10 @@ export const Songcard = ({ code }) => {
   const songUrl = currentTrack?.external_urls?.spotify;
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray relative">
-      <div className='w-1/4'>
-        
-        
+    <>
+      <div className='w-1/4 flex flex-col'>
       {likedSongs.map((track, idx) => (
-          <a href={track.url}>
+          <a href={track?.album?.images?.[0]?.url} className='hover:bg-gray-200 p-5'>
             <div className='flex flex-row'>
             <img src={track?.album?.images?.[0]?.url} alt={track.name} className="w-12 h-12" />
             <div className='flex flex-col justify-evenly'>
@@ -132,7 +130,7 @@ export const Songcard = ({ code }) => {
             </a>))}
 
       </div>
-      
+      <div className="flex items-center justify-center h-screen bg-gray relative">
       <div className="aspect-[9/16] w-full max-w-xs rounded-xl flex flex-col items-center relative pt-7 z-0">
         {recommendations.length > 0 && (
           <div className="w-full h-full p-4 mb-4 rounded-xl shadow-xl relative z-10">
@@ -186,5 +184,6 @@ export const Songcard = ({ code }) => {
         )}
       </div>
     </div>
+    </>
   );
 };
