@@ -110,8 +110,8 @@ export const Songcard = ({ code }) => {
   });
 
   return (
-    <div className='relative'>
-      <div className="w-1/2 left-0 overflow-y-auto max-h-screen absolute ">
+    <div className='static'>
+      <div className="w-1/4 left-0 overflow-y-auto overflow-x-auto max-h-screen absolute ">
         {likedSongs.map((track, idx) => (
           <a key={idx} href={track?.album?.images?.[0]?.url} className="hover:bg-gray-200 p-2">
             <div className="flex flex-row items-center">
