@@ -65,7 +65,7 @@ export const Songcard = ({ code }) => {
     }
   }, [index, recommendations]);
 
-  const handleClickLike = async () => {
+  const handleClickLike = () => {
     if (likedSongs.includes(recommendations[index])) return;
 
     const updatedLikedSongs = [...likedSongs, recommendations[index]];
@@ -109,7 +109,7 @@ export const Songcard = ({ code }) => {
     <div className='static'>
       <div className="w-1/4 left-0 overflow-y-auto overflow-x-auto max-h-screen absolute ">
         {likedSongs.map((track, idx) => (
-          <a key={idx} href={track?.album?.images?.[0]?.url} className="hover:bg-gray-200 p-2">
+          <a key={idx} href={track?.album?.images?.[0]?.url} className="hover:bg-gray-200">
             <div className="flex flex-row items-center">
               <img src={track?.album?.images?.[0]?.url} alt={track.name} className="w-12 h-12 rounded-lg" />
               <div className="flex flex-col ml-2">
