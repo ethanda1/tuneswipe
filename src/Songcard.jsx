@@ -16,6 +16,7 @@ export const Songcard = ({ code }) => {
   const [recommendations, setRecommendations] = useState([]);
   const [likedSongs, setLikedSongs] = useState([]);
   const [gone] = useState(() => new Set());
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(null);
 
   const spotifyApi = new SpotifyWebApi({
     clientId: import.meta.env.VITE_CLIENT_ID,
@@ -90,6 +91,11 @@ export const Songcard = ({ code }) => {
     console.log('Skipped song:', recommendations[index]);
   }
 
+  useEffect(() => {
+    const visibleIndex = recommendations.findIndex((_, index) => !gone.has(index));
+    setCurrentTrackIndex(visibleIndex);
+  }, [gone, recommendations]);
+
   return (
     <div className="flex h-screen">
       <div className="w-1/4 overflow-y-auto overflow-x-hidden">
@@ -125,8 +131,8 @@ export const Songcard = ({ code }) => {
                 <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent text-white">
                   <h2 className="text-xl font-bold truncate">{currentTrack.name}</h2>
                   <p className="truncate">{currentTrack.artists.map(artist => artist.name).join(', ')}</p>
-                  {previewUrl && (
-                    <audio controls>
+                  {i === currentTrackIndex && previewUrl && (
+                    <audio controls autoPlay>
                       <source src={previewUrl} type="audio/mpeg" />
                       Your browser does not support the audio element.
                     </audio>
