@@ -1,33 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import useAuth from './useAuth';
 import SpotifyWebApi from 'spotify-web-api-node';
-import { useSprings, animated } from '@react-spring/web';
-import { useDrag } from '@use-gesture/react';
+import Player from './Player';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-
-const to = (i, isInitialLoad) => ({
-  x: 0,
-  y: 0,
-  scale: isInitialLoad ? 1 : 1,  // Maintain scale without animation initially
-  rot: -10 + Math.random() * 20,
-  delay: isInitialLoad ? 0 : i * 100,
-});
-const from = (_i) => ({ x: 0, rot: 0, scale: 1.5, y: -1000 });
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import { useSwipeable } from 'react-swipeable';
+import { useSprings, animated, to as interpolate } from '@react-spring/web'
+import { useDrag } from 'react-use-gesture'
 
 export const Songcard = ({ code }) => {
   const accessToken = useAuth(code);
   const [recommendations, setRecommendations] = useState([]);
+  const [index, setIndex] = useState(0);
   const [likedSongs, setLikedSongs] = useState([]);
-  const [gone] = useState(() => new Set());
-  const [initialLoad, setInitialLoad] = useState(true);  // Track initial load state
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(null);  // Track index for playing audio
+  const [clickedLike, setClickedLike] = useState(false);
+  const [clicked, setClicked] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const spotifyApi = new SpotifyWebApi({
     clientId: import.meta.env.VITE_CLIENT_ID,
   });
+
+  const open = Boolean(anchorEl);
+
+  const handleClickDash = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   useEffect(() => {
     const storedRecommendations = localStorage.getItem('recommendations');
@@ -55,109 +62,125 @@ export const Songcard = ({ code }) => {
     }
   }, [accessToken, spotifyApi]);
 
-  const [props, api] = useSprings(recommendations.length, i => ({
-    ...to(i, initialLoad),
-    from: from(i),
-  }));
-
   useEffect(() => {
-    if (initialLoad) {
-      setInitialLoad(false);  // Disable initial load animation after mounting
-      setTimeout(() => {
-        api.start(i => to(i, false));
-      }, 100);  // Short delay to ensure the initial load state is applied
-    } else {
-      api.start(i => to(i, false));
+    if (recommendations.length > 0 && !recommendations[index]?.preview_url) {
+      setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
     }
-  }, [initialLoad, recommendations, api]);
+  }, [index, recommendations]);
 
-  const bind = useDrag(({ args: [index], down, movement: [mx], direction: [xDir], velocity }) => {
-    const dir = xDir < 0 ? -1 : 1;
-    if (!down && Math.abs(mx) > 50) {
-      gone.add(index);
-      if (dir === 1) {
-        handleLike(index);
-      } else {
-        handleSkip(index);
-      }
-    }
-    api.start(i => {
-      if (index !== i) return;
-      const isGone = gone.has(index);
-      const x = isGone ? (200 + window.innerWidth) * dir : down ? mx : 0;
-      const scale = down ? 1.1 : 1;
-      if (i === index) {
-        setCurrentTrackIndex(isGone ? null : index);  // Update current track index
-      }
-      return {
-        x,
-        scale,
-        config: { friction: 50, tension: down ? 800 : isGone ? 200 : 500 },
-      };
-    });
-    if (!down && gone.size === recommendations.length) {
-      setTimeout(() => {
-        setRecommendations(prev => prev.filter((_, idx) => !gone.has(idx)));
-        gone.clear();
-      }, 600);
-    }
+  const handleClickLike = async () => {
+    if (likedSongs.includes(recommendations[index])) return;
+
+    const updatedLikedSongs = [...likedSongs, recommendations[index]];
+    setLikedSongs(updatedLikedSongs);
+
+   
+    setTimeout(() => {
+      setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
+    }, 1000);
+
+    setClickedLike(true);
+    setTimeout(() => {
+      setClickedLike(false);
+    }, 1000);
+  };
+
+  const handleClick = () => {
+    setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
+  };
+
+  const handleClicked = () => {
+    setClicked(!clicked);
+  };
+
+  const handleSwipeLeft = () => {
+    setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
+  };
+
+  const handleSwipeRight = () => {
+    handleClickLike();
+  };
+  
+
+  const currentTrack = recommendations[index];
+  const imageUrl = currentTrack?.album?.images?.[0]?.url;
+  const previewUrl = currentTrack?.preview_url;
+  const songUrl = currentTrack?.external_urls?.spotify;
+
+  const handlers = useSwipeable({
+    onSwipedLeft: handleSwipeLeft,
+    onSwipedRight: handleSwipeRight,
   });
 
-  const handleLike = (index) => {
-    const likedSong = recommendations[index];
-    setLikedSongs(prev => [...prev, likedSong]);
-  }
-
-  const handleSkip = (index) => {
-    console.log('Skipped song:', recommendations[index]);
-  }
-
   return (
-    <div className="flex h-screen">
-      <div className="w-1/4 overflow-y-auto overflow-x-hidden">
-        {likedSongs.map((track) => (
-          <div key={track.id}>
-            <h2>{track.name}</h2>
-            <p>{track.artists.map(artist => artist.name).join(', ')}</p>
-          </div>
+    <div className='static'>
+      <div className="w-1/4 left-0 overflow-y-auto overflow-x-auto max-h-screen absolute ">
+        {likedSongs.map((track, idx) => (
+          <a key={idx} href={track?.album?.images?.[0]?.url} className="hover:bg-gray-200 p-2">
+            <div className="flex flex-row items-center">
+              <img src={track?.album?.images?.[0]?.url} alt={track.name} className="w-12 h-12 rounded-lg" />
+              <div className="flex flex-col ml-2">
+                <span className="font-bold">{track.name}</span>
+                <span className="font-normal">{track.artists.map(artist => artist.name).join(', ')}</span>
+              </div>
+            </div>
+          </a>
         ))}
       </div>
   
-      <div className="flex-grow flex items-center justify-center relative">
-        {props.map(({ x, y, scale }, i) => {
-          const currentTrack = recommendations[i];
-          if (!currentTrack) return null;
-          const imageUrl = currentTrack?.album?.images?.[0]?.url;
-          const previewUrl = currentTrack?.preview_url;
-
-          return (
-            <animated.div
-              key={i}
-              style={{ x, y, scale }}
-              className="absolute w-64 h-96 will-change-transform cursor-grab"
-            >
-              <animated.div
-                {...bind(i)}
-                style={{
-                  backgroundImage: `url(${imageUrl})`,
-                  touchAction: 'none',
-                }}
-                className="w-full h-full touch-none bg-white bg-center bg-cover rounded-xl shadow-xl"
-              >
-                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent text-white">
-                  <h2 className="text-xl font-bold truncate">{currentTrack.name}</h2>
-                  <p className="truncate">{currentTrack.artists.map(artist => artist.name).join(', ')}</p>
-                  {i === currentTrackIndex && previewUrl && (
-                    <audio controls autoPlay>
-                      <source src={previewUrl} type="audio/mpeg" />
-                      Your browser does not support the audio element.
-                    </audio>
+      <div {...handlers} className="h-screen bg-gray absolute left-1/2">
+        <div className="aspect-[9/16] w-full max-w-xs rounded-xl flex flex-col items-center relative pt-7 z-0">
+          {recommendations.length > 0 && (
+            <div className="w-full h-full p-4 mb-4 rounded-xl shadow-xl relative z-10">
+              <div className={`absolute inset-0 bg-red-400 opacity-0 transition-opacity duration-300 rounded-xl ${clickedLike ? 'opacity-50' : ''}`}></div>
+              {songUrl ? (
+                <a href={songUrl} target="_blank" rel="noopener noreferrer" className="block relative z-20">
+                  <div className="hover:scale-110 transition ease-in-out duration-1000 p-5 text-nowrap overflow-hidden">
+                    {imageUrl && (
+                      <img src={imageUrl} alt={currentTrack.name} className="w-full h-auto rounded-lg text-nowrap overflow-hidden" />
+                    )}
+                    <div className="mt-4 text-lg font-semibold text-nowrap overflow-hidden ">{currentTrack.name}</div>
+                    <div className="text-gray-600 text-nowrap overflow-hidden">
+                      {currentTrack.artists.map(artist => artist.name).join(', ')}
+                    </div>
+                  </div>
+                </a>
+              ) : (
+                <div className="relative z-20">
+                  {imageUrl && (
+                    <img src={imageUrl} alt={currentTrack.name} className="w-full h-auto rounded-lg" />
                   )}
+                  <div className="mt-4 text-lg font-semibold">{currentTrack.name}</div>
+                  <div className="text-gray-600">
+                    {currentTrack.artists.map(artist => artist.name).join(', ')}
+                  </div>
                 </div>
-              </animated.div>
-            </animated.div>
-          );
-        })}
+              )}
+              <div className="flex flex-col items-center justify-content relative z-20">
+                <div className="flex flex-col text-xs items-center justify-center"></div>
+                {previewUrl ? (
+                  <audio controls src={previewUrl} autoPlay className="absolute top-3.5 bg-transparent" loop>
+                    Your browser does not support the audio element.
+                  </audio>
+                ) : (
+                  <div>This song does not have playback</div>
+                )}
+              </div>
+              <img
+                src="/av85f1b171d762037fe92.png"
+                onClick={handleClick}
+                className="absolute w-10 right-6 bottom-6 hover:scale-110 transition ease-in-out duration-300 z-20"
+                alt="Next"
+              />
+              <img
+                src="/heart-logo-png-transparent.png"
+                onClick={handleClickLike}
+                className={`absolute w-10 left-6 bottom-6 hover:w-11 transition-scale ease-in-out duration-300 z-20 ${clickedLike ? 'scale-150' : ''}`}
+                alt="Like"
+              />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
