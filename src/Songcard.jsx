@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import useAuth from './useAuth';
 import SpotifyWebApi from 'spotify-web-api-node';
-import { useSprings, animated, to as interpolate } from '@react-spring/web'
+import { useSprings, animated } from '@react-spring/web'
 import { useDrag } from '@use-gesture/react'
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
-const to = (i) => ({ x: 0, y: i * -4, scale: 1, rot: -10 + Math.random() * 20, delay: i * 100 })
-const from = (_i) => ({ x: 0, rot: 0, scale: 1.5, y: -1000 })
-const trans = (r, s) => `perspective(1500px) rotateX(30deg) rotateY(${r / 10}deg) rotateZ(${r}deg) scale(${s})`
+const to = (i) => ({ x: 0, y: i * -4, scale: 1, rot: -10 + Math.random() * 20, delay: i * 100 });
+const from = (_i) => ({ x: 0, rot: 0, scale: 1.5, y: -1000 });
 
 export const Songcard = ({ code }) => {
   const accessToken = useAuth(code);
   const [recommendations, setRecommendations] = useState([]);
   const [likedSongs, setLikedSongs] = useState([]);
-  const [gone] = useState(() => new Set())
+  const [gone] = useState(() => new Set());
 
   const spotifyApi = new SpotifyWebApi({
     clientId: import.meta.env.VITE_CLIENT_ID,
@@ -51,44 +50,38 @@ export const Songcard = ({ code }) => {
   const [props, api] = useSprings(recommendations.length, i => ({
     ...to(i),
     from: from(i),
-  }))
-
-  useEffect(() => {
-    console.log('Recommendations updated:', recommendations);
-    api.start(i => to(i))
-  }, [recommendations, api])
+  }));
 
   const bind = useDrag(({ args: [index], down, movement: [mx], direction: [xDir], velocity }) => {
-    const dir = xDir < 0 ? -1 : 1
-    if (!down && Math.abs(mx) > 50) {  // Threshold for swipe
-      gone.add(index)
+    const dir = xDir < 0 ? -1 : 1;
+    if (!down && Math.abs(mx) > 50) {  
+      gone.add(index);
       if (dir === 1) {
-        handleLike(index)
+        handleLike(index);
       } else {
-        handleSkip(index)
+        handleSkip(index);
       }
     }
     api.start(i => {
-      if (index !== i) return
-      const isGone = gone.has(index)
-      const x = isGone ? (200 + window.innerWidth) * dir : down ? mx : 0
-      const scale = down ? 1.1 : 1
+      if (index !== i) return;
+      const isGone = gone.has(index);
+      const x = isGone ? (200 + window.innerWidth) * dir : down ? mx : 0;
+      const scale = down ? 1.1 : 1;
       return {
         x,
         scale,
         config: { friction: 50, tension: down ? 800 : isGone ? 200 : 500 },
-      }
-    })
+      };
+    });
     if (!down && gone.size === recommendations.length) {
       setTimeout(() => {
-        gone.clear()
-        api.start(i => to(i))
-      }, 600)
+        setRecommendations(prev => prev.filter((_, idx) => !gone.has(idx)));
+        gone.clear();
+      }, 600);
     }
-  })
+  });
 
   const handleLike = (index) => {
-    console.log('Liked song:', recommendations[index]);
     const likedSong = recommendations[index];
     setLikedSongs(prev => [...prev, likedSong]);
   }
@@ -113,6 +106,7 @@ export const Songcard = ({ code }) => {
           const currentTrack = recommendations[i];
           if (!currentTrack) return null;
           const imageUrl = currentTrack?.album?.images?.[0]?.url;
+          const previewUrl = currentTrack?.preview_url;
 
           return (
             <animated.div
@@ -131,10 +125,16 @@ export const Songcard = ({ code }) => {
                 <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent text-white">
                   <h2 className="text-xl font-bold truncate">{currentTrack.name}</h2>
                   <p className="truncate">{currentTrack.artists.map(artist => artist.name).join(', ')}</p>
+                  {previewUrl && (
+                    <audio controls>
+                      <source src={previewUrl} type="audio/mpeg" />
+                      Your browser does not support the audio element.
+                    </audio>
+                  )}
                 </div>
               </animated.div>
             </animated.div>
-          )
+          );
         })}
       </div>
     </div>
