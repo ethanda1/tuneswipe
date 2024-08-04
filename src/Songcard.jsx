@@ -139,7 +139,13 @@ export const Songcard = ({ code }) => {
         
         {likedSongs.map((track, idx) => (
           <MenuItem key={idx} onClick={handleClose}>
-            <a href={track.url}><span className='font-bold'>{track.name} </span> by <span className='font-bold'>{track.artists.map(artist => artist.name).join(', ')}</span></a>
+            <a href={track.url}>
+              <img src={track?.album?.images?.[0]?.url} alt={track.name} className="w-20 h-20 mr-4" />
+              <div className='flex flex-col'>
+              <span className='font-bold'>{track.name} </span>
+              <span className='font-normal'>{track.artists.map(artist => artist.name).join(', ')}</span>
+              </div>
+              </a>
           </MenuItem>
         ))}
         </Menu>
