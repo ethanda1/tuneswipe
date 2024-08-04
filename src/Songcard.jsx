@@ -66,7 +66,8 @@ export const Songcard = ({ code }) => {
   }, [index, recommendations]);
 
   const handleClickLike = () => {
-    if (likedSongs.includes(recommendations[index])) return;
+    const currentTrackId = recommendations[index]?.id;
+    if (likedSongs.some(track => track.id === currentTrackId)) return;
 
     const updatedLikedSongs = [...likedSongs, recommendations[index]];
     setLikedSongs(updatedLikedSongs);
@@ -109,8 +110,8 @@ export const Songcard = ({ code }) => {
     <div className='static'>
       <div className="w-1/4 left-0 overflow-y-auto overflow-x-auto max-h-screen absolute ">
         {likedSongs.map((track, idx) => (
-          <a key={idx} href={track?.album?.images?.[0]?.url} className="hover:bg-gray-200">
-            <div className="flex flex-row items-center">
+          <a key={idx} href={track?.external_urls?.spotify} className="">
+            <div className="flex flex-row items-center hover:bg-gray-200">
               <img src={track?.album?.images?.[0]?.url} alt={track.name} className="w-12 h-12 rounded-lg" />
               <div className="flex flex-col ml-2">
                 <span className="font-bold">{track.name}</span>
@@ -121,8 +122,8 @@ export const Songcard = ({ code }) => {
         ))}
       </div>
   
-      <div className="h-screen bg-gray absolute left-1/2">
-        <div className="aspect-[9/16] w-full max-w-xs rounded-xl flex flex-col items-center relative pt-7 z-0">
+      <div className="h-screen bg-gray absolute left-1/2 top-1/8">
+        <div className="aspect-[9/16] w-full max-w-xs rounded-xl flex flex-col items-center relative z-0">
           {recommendations.length > 0 && (
             <div className="w-full h-full p-4 mb-4 rounded-xl shadow-xl relative z-10">
               <div className={`absolute inset-0 bg-red-400 opacity-0 transition-opacity duration-300 rounded-xl ${clickedLike ? 'opacity-50' : ''}`}></div>
