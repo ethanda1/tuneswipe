@@ -7,7 +7,8 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import Button from '@mui/material/Button';
-
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 
 export const Songcard = ({ code }) => {
   const accessToken = useAuth(code);
@@ -16,10 +17,21 @@ export const Songcard = ({ code }) => {
   const [likedSongs, setLikedSongs] = useState([]);
   const [clickedLike, setClickedLike] = useState(false);
   const [clicked, setClicked] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const spotifyApi = new SpotifyWebApi({
     clientId: import.meta.env.VITE_CLIENT_ID,
   });
+
+  const open = Boolean(anchorEl);
+
+  const handleClickDash = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   useEffect(() => {
     const storedRecommendations = localStorage.getItem('recommendations');
@@ -67,6 +79,7 @@ export const Songcard = ({ code }) => {
           seed_tracks: seedTracks.join(','),  
           limit: 100,
         });
+
         setClickedLike(true);
         setTimeout(() => {
           setRecommendations(response.body.tracks);
@@ -79,7 +92,8 @@ export const Songcard = ({ code }) => {
       }
     } else {
       setTimeout(() => {
-      setIndex((prevIndex) => (prevIndex + 1) % recommendations.length)}, 1000);
+        setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
+      }, 1000);
     }
   
     setClickedLike(true);
@@ -87,7 +101,6 @@ export const Songcard = ({ code }) => {
       setClickedLike(false);
     }, 1000);
   };
-  
 
   const handleClick = () => {
     setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
@@ -111,15 +124,34 @@ export const Songcard = ({ code }) => {
         >
           Liked Songs
         </div>
-        {clicked && (
-          likedSongs.map((track, idx) => (
-            <div key={idx}>
-              <a href={track.uri} className='bg-white'>
-                <div className='z-50 hover:bg-gray-200'>{track.name} <span className='font-normal'>by</span> {track.artists.map(artist => artist.name).join(', ')}</div>
-              </a>
-            </div>
-          ))
-        )}
+        <Button
+          id="basic-button"
+          aria-controls={open ? 'basic-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? 'true' : undefined}
+          onClick={handleClickDash}
+        >
+          Dashboard
+        </Button>
+        <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          MenuListProps={{
+            'aria-labelledby': 'basic-button',
+          }}
+        >
+          <MenuItem onClick={handleClose}>Profile</MenuItem>
+          <MenuItem onClick={handleClose}>My account</MenuItem>
+          <MenuItem onClick={handleClose}>Logout</MenuItem>
+        </Menu>
+        
+        {likedSongs.map((track, idx) => (
+          <MenuItem key={idx} onClick={handleClose}>
+            <a href={track.url}>{track.name} by {track.artists.map(artist => artist.name).join(', ')}</a>
+          </MenuItem>
+        ))}
       </div>
       
       <div className="aspect-[9/16] w-full max-w-xs rounded-xl flex flex-col items-center relative pt-7 z-0">
@@ -171,7 +203,6 @@ export const Songcard = ({ code }) => {
               className={`absolute w-10 left-6 bottom-6 hover:w-11 transition-scale ease-in-out duration-300 z-20 ${clickedLike ? 'scale-150' : ''}`}
               alt="Like"
             />
-            <Button variant="contained">Hello world</Button>
           </div>
         )}
       </div>
