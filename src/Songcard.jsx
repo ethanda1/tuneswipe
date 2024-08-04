@@ -53,6 +53,10 @@ export const Songcard = ({ code }) => {
     from: from(i),
   }))
 
+  useEffect(() => {
+    api.start(i => to(i))
+  }, [recommendations, api])
+
   const bind = useDrag(({ args: [index], down, movement: [mx], direction: [xDir], velocity }) => {
     const trigger = velocity > 0.2
     const dir = xDir < 0 ? -1 : 1
@@ -91,10 +95,9 @@ export const Songcard = ({ code }) => {
     setLikedSongs(prev => [...prev, likedSong]);
   }
 
-
   return (
-    <div className='static'>
-      <div className="w-1/4 left-0 overflow-y-auto overflow-x-auto max-h-screen absolute">
+    <div className="flex h-screen">
+      <div className="w-1/4 overflow-y-auto overflow-x-hidden">
         {likedSongs.map((track, idx) => (
           <a key={idx} href={track?.external_urls?.spotify} target="_blank" rel="noopener noreferrer" className="hover:bg-gray-200 p-2 block">
             <div className="flex flex-row items-center">
@@ -108,7 +111,7 @@ export const Songcard = ({ code }) => {
         ))}
       </div>
   
-      <div className="h-screen bg-gray absolute left-1/2 transform -translate-x-1/2">
+      <div className="flex-grow flex items-center justify-center relative">
         {props.map(({ x, y, rot, scale }, i) => {
           const currentTrack = recommendations[i];
           if (!currentTrack) return null;
@@ -118,7 +121,7 @@ export const Songcard = ({ code }) => {
             <animated.div
               key={i}
               style={{ x, y }}
-              className="absolute w-80 h-128 will-change-transform"
+              className="absolute w-64 h-96 will-change-transform"
             >
               <animated.div
                 {...bind(i)}
