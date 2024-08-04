@@ -23,3 +23,8 @@ audio::-webkit-media-controls-overflow-menu-button{
   display: none !important;
 }
 
+
+.basic-button{
+  color: black !important;
+  font-size: large;
+}

@@ -117,40 +117,19 @@ export const Songcard = ({ code }) => {
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray relative">
-      <div className='absolute left-10 top-10 z-50 shadow-md text-black bg-white font-semibold py-2 px-4 rounded w-auto'>
-        <Button
-          id="basic-button"
-          aria-controls={open ? 'basic-menu' : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? 'true' : undefined}
-          onClick={handleClickDash}
-        >
-          Liked Songs
-        </Button>
-        <Menu
-          id="basic-menu"
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleClose}
-          MenuListProps={{
-            'aria-labelledby': 'basic-button',
-          }}
-        >
+      <div className='w-1/4'>
         
-        {likedSongs.map((track, idx) => (
-          <MenuItem key={idx} onClick={handleClose}>
-            <a href={track.url}>
-              <div className='flex flex-row gap-4'>
-              <img src={track?.album?.images?.[0]?.url} alt={track.name} className="w-15 h-15" />
-              <div className='flex flex-col'>
-              <span className='font-bold'>{track.name} </span>
-              <span className='font-normal'>{track.artists.map(artist => artist.name).join(', ')}</span>
-              </div>
-              </div>
-              </a>
-          </MenuItem>
-        ))}
-        </Menu>
+        
+      {likedSongs.map((track, idx) => (
+          <a href={track.url}>
+            <div className='flex flex-row'>
+            <img src={track?.album?.images?.[0]?.url} alt={track.name} className="w-12 h-12" />
+            <div className='flex flex-col justify-evenly'>
+            <span className='font-bold'>{track.name}</span>
+            <span className='font-normal'>{track.artists.map(artist => artist.name).join(', ')}</span>
+            </div>
+            </div>
+            </a>))}
 
       </div>
       
