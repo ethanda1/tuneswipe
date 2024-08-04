@@ -72,6 +72,7 @@ export const Songcard = ({ code }) => {
     const updatedLikedSongs = [...likedSongs, recommendations[index]];
     setLikedSongs(updatedLikedSongs);
 
+   
     setTimeout(() => {
       setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
     }, 1000);
@@ -109,7 +110,7 @@ export const Songcard = ({ code }) => {
   });
 
   return (
-    <div className="flex flex-row relative h-screen">
+    <div className='flex flex-row'>
       <div className="w-1/4 flex flex-col overflow-y-auto max-h-screen">
         {likedSongs.map((track, idx) => (
           <a key={idx} href={track?.album?.images?.[0]?.url} className="hover:bg-gray-200 p-2">
@@ -123,11 +124,11 @@ export const Songcard = ({ code }) => {
           </a>
         ))}
       </div>
-
-      <div {...handlers} className="flex items-center justify-center h-full w-3/4 absolute top-0 left-0">
+  
+      <div {...handlers} className="flex items-center justify-center h-screen bg-gray">
         <div className="aspect-[9/16] w-full max-w-xs rounded-xl flex flex-col items-center relative pt-7 z-0">
           {recommendations.length > 0 && (
-            <div className="w-full h-full p-4 mb-4 rounded-xl shadow-xl relative z-10 flex items-center justify-center">
+            <div className="w-full h-full p-4 mb-4 rounded-xl shadow-xl relative z-10">
               <div className={`absolute inset-0 bg-red-400 opacity-0 transition-opacity duration-300 rounded-xl ${clickedLike ? 'opacity-50' : ''}`}></div>
               {songUrl ? (
                 <a href={songUrl} target="_blank" rel="noopener noreferrer" className="block relative z-20">
