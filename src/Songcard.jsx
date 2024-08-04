@@ -60,8 +60,7 @@ export const Songcard = ({ code }) => {
 
   const bind = useDrag(({ args: [index], down, movement: [mx], direction: [xDir], velocity }) => {
     const dir = xDir < 0 ? -1 : 1
-    console.log('Drag detected:', { down, mx, xDir, velocity,  dir });
-    if (!down) {
+    if (!down && Math.abs(mx) > 50) {  // Threshold for swipe
       gone.add(index)
       if (dir === 1) {
         handleLike(index)
@@ -73,14 +72,10 @@ export const Songcard = ({ code }) => {
       if (index !== i) return
       const isGone = gone.has(index)
       const x = isGone ? (200 + window.innerWidth) * dir : down ? mx : 0
-      const rot = mx / 100 + (isGone ? dir * 10 * velocity : 0)
       const scale = down ? 1.1 : 1
-      console.log('Updating spring:', { index: i, x, rot, scale });
       return {
         x,
-        rot,
         scale,
-        delay: undefined,
         config: { friction: 50, tension: down ? 800 : isGone ? 200 : 500 },
       }
     })
@@ -105,19 +100,16 @@ export const Songcard = ({ code }) => {
   return (
     <div className="flex h-screen">
       <div className="w-1/4 overflow-y-auto overflow-x-hidden">
-      {likedSongs.map((track) => (
-  <div key={track.id}>
-    <h2>{track.name}</h2>
-    <p>{track.artists.map((artist, index) => (
-      <span key={index}>{artist}{index < track.artists.length - 1 ? ', ' : ''}</span>
-    ))}</p>
-  </div>
-))}
-
+        {likedSongs.map((track) => (
+          <div key={track.id}>
+            <h2>{track.name}</h2>
+            <p>{track.artists.map(artist => artist.name).join(', ')}</p>
+          </div>
+        ))}
       </div>
   
       <div className="flex-grow flex items-center justify-center relative">
-        {props.map(({ x, y, rot, scale }, i) => {
+        {props.map(({ x, y, scale }, i) => {
           const currentTrack = recommendations[i];
           if (!currentTrack) return null;
           const imageUrl = currentTrack?.album?.images?.[0]?.url;
@@ -125,13 +117,12 @@ export const Songcard = ({ code }) => {
           return (
             <animated.div
               key={i}
-              style={{ x, y }}
+              style={{ x, y, scale }}
               className="absolute w-64 h-96 will-change-transform cursor-grab"
             >
               <animated.div
                 {...bind(i)}
                 style={{
-                  transform: interpolate([rot, scale], trans),
                   backgroundImage: `url(${imageUrl})`,
                   touchAction: 'none',
                 }}
