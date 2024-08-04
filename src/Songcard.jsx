@@ -9,7 +9,7 @@ import '@fontsource/roboto/700.css';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { Swipeable } from 'react-swipeable';
+import { useSwipeable } from 'react-swipeable';
 
 export const Songcard = ({ code }) => {
   const accessToken = useAuth(code);
@@ -124,9 +124,14 @@ export const Songcard = ({ code }) => {
   const previewUrl = currentTrack?.preview_url;
   const songUrl = currentTrack?.external_urls?.spotify;
 
+  const handlers = useSwipeable({
+    onSwipedLeft: handleSwipeLeft,
+    onSwipedRight: handleSwipeRight,
+  });
+
   return (
-    <>
-      <div className="w-1/4 flex flex-col overflow-y-auto">
+    <div className='flex flex-row'>
+      <div className="w-1/4 flex flex-col overflow-y-auto max-h-screen">
         {likedSongs.map((track, idx) => (
           <a key={idx} href={track?.album?.images?.[0]?.url} className="hover:bg-gray-200 p-2">
             <div className="flex flex-row items-center">
@@ -140,62 +145,60 @@ export const Songcard = ({ code }) => {
         ))}
       </div>
   
-      <Swipeable onSwipedLeft={handleSwipeLeft} onSwipedRight={handleSwipeRight}>
-        <div className="flex items-center justify-center h-screen bg-gray relative">
-          <div className="aspect-[9/16] w-full max-w-xs rounded-xl flex flex-col items-center relative pt-7 z-0">
-            {recommendations.length > 0 && (
-              <div className="w-full h-full p-4 mb-4 rounded-xl shadow-xl relative z-10">
-                <div className={`absolute inset-0 bg-red-400 opacity-0 transition-opacity duration-300 rounded-xl ${clickedLike ? 'opacity-50' : ''}`}></div>
-                {songUrl ? (
-                  <a href={songUrl} target="_blank" rel="noopener noreferrer" className="block relative z-20">
-                    <div className="hover:scale-110 transition ease-in-out duration-1000 p-5 text-nowrap overflow-hidden">
-                      {imageUrl && (
-                        <img src={imageUrl} alt={currentTrack.name} className="w-full h-auto rounded-lg text-nowrap overflow-hidden" />
-                      )}
-                      <div className="mt-4 text-lg font-semibold text-nowrap overflow-hidden ">{currentTrack.name}</div>
-                      <div className="text-gray-600 text-nowrap overflow-hidden">
-                        {currentTrack.artists.map(artist => artist.name).join(', ')}
-                      </div>
-                    </div>
-                  </a>
-                ) : (
-                  <div className="relative z-20">
+      <div {...handlers} className="flex items-center justify-center h-screen bg-gray relative">
+        <div className="aspect-[9/16] w-full max-w-xs rounded-xl flex flex-col items-center relative pt-7 z-0">
+          {recommendations.length > 0 && (
+            <div className="w-full h-full p-4 mb-4 rounded-xl shadow-xl relative z-10">
+              <div className={`absolute inset-0 bg-red-400 opacity-0 transition-opacity duration-300 rounded-xl ${clickedLike ? 'opacity-50' : ''}`}></div>
+              {songUrl ? (
+                <a href={songUrl} target="_blank" rel="noopener noreferrer" className="block relative z-20">
+                  <div className="hover:scale-110 transition ease-in-out duration-1000 p-5 text-nowrap overflow-hidden">
                     {imageUrl && (
-                      <img src={imageUrl} alt={currentTrack.name} className="w-full h-auto rounded-lg" />
+                      <img src={imageUrl} alt={currentTrack.name} className="w-full h-auto rounded-lg text-nowrap overflow-hidden" />
                     )}
-                    <div className="mt-4 text-lg font-semibold">{currentTrack.name}</div>
-                    <div className="text-gray-600">
+                    <div className="mt-4 text-lg font-semibold text-nowrap overflow-hidden ">{currentTrack.name}</div>
+                    <div className="text-gray-600 text-nowrap overflow-hidden">
                       {currentTrack.artists.map(artist => artist.name).join(', ')}
                     </div>
                   </div>
-                )}
-                <div className="flex flex-col items-center justify-content relative z-20">
-                  <div className="flex flex-col text-xs items-center justify-center"></div>
-                  {previewUrl ? (
-                    <audio controls src={previewUrl} autoPlay className="absolute top-3.5 bg-transparent" loop>
-                      Your browser does not support the audio element.
-                    </audio>
-                  ) : (
-                    <div>This song does not have playback</div>
+                </a>
+              ) : (
+                <div className="relative z-20">
+                  {imageUrl && (
+                    <img src={imageUrl} alt={currentTrack.name} className="w-full h-auto rounded-lg" />
                   )}
+                  <div className="mt-4 text-lg font-semibold">{currentTrack.name}</div>
+                  <div className="text-gray-600">
+                    {currentTrack.artists.map(artist => artist.name).join(', ')}
+                  </div>
                 </div>
-                <img
-                  src="/av85f1b171d762037fe92.png"
-                  onClick={handleClick}
-                  className="absolute w-10 right-6 bottom-6 hover:scale-110 transition ease-in-out duration-300 z-20"
-                  alt="Next"
-                />
-                <img
-                  src="/heart-logo-png-transparent.png"
-                  onClick={handleClickLike}
-                  className={`absolute w-10 left-6 bottom-6 hover:w-11 transition-scale ease-in-out duration-300 z-20 ${clickedLike ? 'scale-150' : ''}`}
-                  alt="Like"
-                />
+              )}
+              <div className="flex flex-col items-center justify-content relative z-20">
+                <div className="flex flex-col text-xs items-center justify-center"></div>
+                {previewUrl ? (
+                  <audio controls src={previewUrl} autoPlay className="absolute top-3.5 bg-transparent" loop>
+                    Your browser does not support the audio element.
+                  </audio>
+                ) : (
+                  <div>This song does not have playback</div>
+                )}
               </div>
-            )}
-          </div>
+              <img
+                src="/av85f1b171d762037fe92.png"
+                onClick={handleClick}
+                className="absolute w-10 right-6 bottom-6 hover:scale-110 transition ease-in-out duration-300 z-20"
+                alt="Next"
+              />
+              <img
+                src="/heart-logo-png-transparent.png"
+                onClick={handleClickLike}
+                className={`absolute w-10 left-6 bottom-6 hover:w-11 transition-scale ease-in-out duration-300 z-20 ${clickedLike ? 'scale-150' : ''}`}
+                alt="Like"
+              />
+            </div>
+          )}
         </div>
-      </Swipeable>
-    </>
+      </div>
+    </div>
   );
 };
