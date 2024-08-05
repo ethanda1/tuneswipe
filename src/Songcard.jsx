@@ -105,7 +105,7 @@ export const Songcard = ({ code }) => {
 
   return (
     <div className='static'>
-      <div className="w-1/4 left-0 overflow-y-auto overflow-x-auto max-h-screen absolute ">
+      <div className="w-1/4 left-0 overflow-y-auto overflow-x-auto max-h-screen absolute bg-gray-400 ">
         {likedSongs.map((track, idx) => (
           <a key={idx} href={track?.external_urls?.spotify} className="">
             <div className="flex flex-row items-center hover:bg-gray-200">
@@ -119,7 +119,7 @@ export const Songcard = ({ code }) => {
         ))}
       </div>
   
-      <div className="h-screen bg-gray absolute left-1/2 top-1/8">
+      <div className="h-screen bg-gray absolute left-1/2 items-center">
         <div className="aspect-[9/16] w-full max-w-xs rounded-xl flex flex-col items-center relative z-0">
           {recommendations.length > 0 && (
             <div className="w-full h-full p-4 mb-4 rounded-xl shadow-xl relative z-10">
