@@ -123,7 +123,7 @@ export const Songcard = ({ code }) => {
         ))}
       </div>
   
-      <div className="h-screen bg-gray absolute left-1/2 items-center">
+      <div className="flex h-screen bg-gray absolute left-1/2 items-center">
         <div className="aspect-[9/16] w-full max-w-xs rounded-xl flex flex-col items-center relative z-0">
           {recommendations.length > 0 && (
             <div className="w-full h-full p-4 mb-4 rounded-xl shadow-xl relative z-10">
