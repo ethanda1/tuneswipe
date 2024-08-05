@@ -34,8 +34,10 @@ export const Songcard = ({ code }) => {
   };
 
   useEffect(() => {
-
-    if (accessToken) {
+    const storedRecommendations = localStorage.getItem('recommendations');
+    if (storedRecommendations) {
+      setRecommendations(JSON.parse(storedRecommendations));
+    } else if (accessToken) {
       const getRecommendations = async () => {
         try {
           spotifyApi.setAccessToken(accessToken);
@@ -47,6 +49,7 @@ export const Songcard = ({ code }) => {
           });
 
           setRecommendations(response.body.tracks);
+          localStorage.setItem('recommendations', JSON.stringify(response.body.tracks));
         } catch (error) {
           console.error('Error getting recommendations:', error);
         }
@@ -64,6 +67,7 @@ export const Songcard = ({ code }) => {
 
   const handleClickLike = () => {
     const currentTrackId = recommendations[index]?.id;
+
     if (likedSongs.some(track => track.id === currentTrackId)) return;
 
     const updatedLikedSongs = [...likedSongs, recommendations[index]];
@@ -105,11 +109,11 @@ export const Songcard = ({ code }) => {
 
   return (
     <div className='static'>
-      <div className="w-1/4 left-0 overflow-y-auto overflow-x-auto max-h-screen absolute bg-gray-400 ">
+      <div className="w-1/4 left-0 overflow-y-auto overflow-x-auto max-h-screen absolute ">
         {likedSongs.map((track, idx) => (
           <a key={idx} href={track?.external_urls?.spotify} className="">
             <div className="flex flex-row items-center hover:bg-gray-200">
-              <img src={track?.album?.images?.[0]?.url} alt={track.name} className="w-12 h-12 rounded-lg" id='song-img' />
+              <img src={track?.album?.images?.[0]?.url} alt={track.name} className="w-12 h-12 rounded-lg" />
               <div className="flex flex-col ml-2">
                 <span className="font-bold">{track.name}</span>
                 <span className="font-normal">{track.artists.map(artist => artist.name).join(', ')}</span>
@@ -119,7 +123,7 @@ export const Songcard = ({ code }) => {
         ))}
       </div>
   
-      <div className="h-screen bg-gray absolute left-1/2 items-center">
+      <div className="h-screen bg-gray absolute left-1/2 top-1/8">
         <div className="aspect-[9/16] w-full max-w-xs rounded-xl flex flex-col items-center relative z-0">
           {recommendations.length > 0 && (
             <div className="w-full h-full p-4 mb-4 rounded-xl shadow-xl relative z-10">
