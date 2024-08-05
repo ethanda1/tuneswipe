@@ -4,7 +4,6 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
-// Get the resolved path to the file and directory
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -13,7 +12,6 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-// Serve static files from the "src" directory
 app.use(express.static(path.join(__dirname, 'dist')));
 
 app.get('*', (req, res) => {
