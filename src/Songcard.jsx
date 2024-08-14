@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useAuth from './useAuth';
 import SpotifyWebApi from 'spotify-web-api-node';
-import Player from './Player';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
@@ -65,7 +64,7 @@ export const Songcard = ({ code }) => {
     }
   }, [index, recommendations]);
 
-  const handleClickLike = () => {
+  const handleClickLike = async () => {
     const currentTrackId = recommendations[index]?.id;
 
     if (likedSongs.some(track => track.id === currentTrackId)) return;
@@ -73,10 +72,24 @@ export const Songcard = ({ code }) => {
     const updatedLikedSongs = [...likedSongs, recommendations[index]];
     setLikedSongs(updatedLikedSongs);
 
-   
-    setTimeout(() => {
+    if (updatedLikedSongs.length % 5 === 0) {
+      try {
+        const seedTracks = updatedLikedSongs.slice(-5).map(track => track.id);
+        spotifyApi.setAccessToken(accessToken);
+        const response = await spotifyApi.getRecommendations({
+          seed_tracks: seedTracks,
+          limit: 100,
+        });
+
+        setRecommendations(response.body.tracks);
+        setIndex(0); 
+        localStorage.setItem('recommendations', JSON.stringify(response.body.tracks));
+      } catch (error) {
+        console.error('Error getting new recommendations:', error);
+      }
+    } else {
       setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
-    }, 1000);
+    }
 
     setClickedLike(true);
     setTimeout(() => {
@@ -99,17 +112,15 @@ export const Songcard = ({ code }) => {
   const handleSwipeRight = () => {
     handleClickLike();
   };
-  
 
   const currentTrack = recommendations[index];
   const imageUrl = currentTrack?.album?.images?.[0]?.url;
   const previewUrl = currentTrack?.preview_url;
   const songUrl = currentTrack?.external_urls?.spotify;
 
-
   return (
     <div className='static'>
-      <div className="w-1/4 left-0 overflow-y-auto overflow-x-auto max-h-screen absolute ">
+      <div className="w-1/4 left-0 overflow-y-auto overflow-x-auto max-h-screen absolute">
         {likedSongs.map((track, idx) => (
           <a key={idx} href={track?.external_urls?.spotify} className="">
             <div className="flex flex-row items-center hover:bg-gray-200">
@@ -122,7 +133,7 @@ export const Songcard = ({ code }) => {
           </a>
         ))}
       </div>
-  
+
       <div className="flex h-screen bg-gray absolute left-1/2 items-center">
         <div className="aspect-[9/16] w-full max-w-xs rounded-xl flex flex-col items-center relative z-0">
           {recommendations.length > 0 && (
@@ -134,7 +145,7 @@ export const Songcard = ({ code }) => {
                     {imageUrl && (
                       <img src={imageUrl} alt={currentTrack.name} className="w-full h-auto rounded-lg text-nowrap overflow-hidden" />
                     )}
-                    <div className="mt-4 text-lg font-semibold text-nowrap overflow-hidden ">{currentTrack.name}</div>
+                    <div className="mt-4 text-lg font-semibold text-nowrap overflow-hidden">{currentTrack.name}</div>
                     <div className="text-gray-600 text-nowrap overflow-hidden">
                       {currentTrack.artists.map(artist => artist.name).join(', ')}
                     </div>

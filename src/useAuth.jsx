@@ -7,7 +7,7 @@ export default function useAuth(code) {
   const [expiresIn, setExpiresIn] = useState();
 
   useEffect(() => {
-    axios.post('https://tuneswipe-1234520f34b7.herokuapp.com/login', { code })
+    axios.post('http://localhost:3001/login', { code })
       .then(res => {
         setAccessToken(res.data.accessToken);
         setRefreshToken(res.data.refreshToken);
@@ -22,7 +22,7 @@ export default function useAuth(code) {
   useEffect(() => {
     if (!refreshToken || !expiresIn) return;
     const interval = setInterval(() => {
-      axios.post('https://tuneswipe-1234520f34b7.herokuapp.com/refresh', { refreshToken })
+      axios.post('http://localhost:3001/refresh', { refreshToken })
         .then(res => {
           setAccessToken(res.data.accessToken);
           setExpiresIn(res.data.expiresIn);
