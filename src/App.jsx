@@ -2,6 +2,7 @@ import { useState } from 'react';
 import './App.css';
 import { Songcard } from './Songcard';
 import spotifyWebApi from 'spotify-web-api-node';
+import { Input } from './Input';
 
 const code = new URLSearchParams(window.location.search).get("code");
 
@@ -10,7 +11,7 @@ const AUTH_URL =
 
 
 function App() {
-  return code ? <Songcard code={code} /> : (
+  return code ? <Input code={code}/> : (
     <div className='bg-black min-h-screen bg-white flex items-center justify-center flex-col pb-20 '>
       <div className='text-6xl text-green-200 pb-10 font-bold drop-shadow-xl'>
         TuneSwipe

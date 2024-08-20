@@ -10,8 +10,7 @@ import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 
-export const Songcard = ({ code }) => {
-  const accessToken = useAuth(code);
+export const PSongcard = ({ songs }) => {
   const [recommendations, setRecommendations] = useState([]);
   const [index, setIndex] = useState(0);
   const [likedSongs, setLikedSongs] = useState([]);
@@ -19,9 +18,6 @@ export const Songcard = ({ code }) => {
   const [clicked, setClicked] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const spotifyApi = new SpotifyWebApi({
-    clientId: '6223f4e8625a427a83463c0ac5848388',
-  });
 
   const open = Boolean(anchorEl);
 
@@ -34,30 +30,23 @@ export const Songcard = ({ code }) => {
   };
 
   useEffect(() => {
-    const storedRecommendations = localStorage.getItem('recommendations');
-    if (storedRecommendations) {
-      setRecommendations(JSON.parse(storedRecommendations));
-    } else if (accessToken) {
-      const getRecommendations = async () => {
-        try {
-          spotifyApi.setAccessToken(accessToken);
-          const topTracks = await spotifyApi.getMyTopTracks({ limit: 10 });
-          const seedTracks = topTracks.body.items.map(track => track.id);
-          const response = await spotifyApi.getRecommendations({
-            seed_tracks: seedTracks,
-            limit: 100,
-          });
-          setRecommendations(response.body.tracks);
-          localStorage.setItem('recommendations', JSON.stringify(response.body.tracks));
-        } catch (error) {
-          console.error('Error getting recommendations:', error);
+    if (songs && Array.isArray(songs.songs)) {
+      const songArray = songs.songs;
+      let flattenedSongs = [];
+      for (let i = 0; i < songArray.length; i++) {
+        const subArray = songArray[i];
+        if (Array.isArray(subArray)) {
+          for (let j = 0; j < subArray.length; j++) {
+            flattenedSongs.push(subArray[j]);
+          }
         }
-      };
-
-      getRecommendations();
+      }
+      setRecommendations(flattenedSongs);
+    } else {
+      console.error('Invalid format for songs:', songs);
     }
-  }, [accessToken]);
-
+  }, [songs]);
+  
   useEffect(() => {
     if (recommendations.length > 0 && !recommendations[index]?.preview_url) {
       setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
@@ -72,23 +61,7 @@ export const Songcard = ({ code }) => {
     const updatedLikedSongs = [...likedSongs, recommendations[index]];
     setLikedSongs(updatedLikedSongs);
 
-    if (updatedLikedSongs.length % 5 === 0) {
-      try {
-        const seedTracks = updatedLikedSongs.slice(-5).map(track => track.id);
-        spotifyApi.setAccessToken(accessToken);
-        const response = await spotifyApi.getRecommendations({
-          seed_tracks: seedTracks,
-          limit: 100,
-        });
-        setRecommendations(response.body.tracks);
-        setIndex(0); 
-        localStorage.setItem('recommendations', JSON.stringify(response.body.tracks));
-      } catch (error) {
-        console.error('Error getting new recommendations:', error);
-      }
-    } else {
-      setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
-    }
+    setIndex((prevIndex) => (prevIndex + 1) % recommendations.length);
 
     setClickedLike(true);
     setTimeout(() => {
@@ -145,9 +118,9 @@ export const Songcard = ({ code }) => {
                       <img src={imageUrl} alt={currentTrack.name} className="w-full h-auto rounded-lg text-nowrap overflow-hidden" />
                     )}
                     <div className="mt-4 text-lg font-semibold text-nowrap overflow-hidden">{currentTrack.name}</div>
-                    <div className="text-gray-600 text-nowrap overflow-hidden">
-                      {currentTrack.artists.map(artist => artist.name).join(', ')}
-                    </div>
+<div className="text-gray-600 text-nowrap overflow-hidden">
+  {currentTrack?.artists?.map(artist => artist.name).join(', ') || 'Unknown Artist'}
+</div>
                   </div>
                 </a>
               ) : (
@@ -157,7 +130,7 @@ export const Songcard = ({ code }) => {
                   )}
                   <div className="mt-4 text-lg font-semibold">{currentTrack.name}</div>
                   <div className="text-gray-600">
-                    {currentTrack.artists.map(artist => artist.name).join(', ')}
+                  {currentTrack?.artists?.map(artist => artist.name).join(', ') || 'Unknown Artist'}
                   </div>
                 </div>
               )}
