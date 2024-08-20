@@ -1,5 +1,7 @@
 Making music discovery easier
 
+![image](https://github.com/user-attachments/assets/69d9664a-ad7d-425f-8e83-a57aa7090148)
+
 enter your prefereces...
 ![image](https://github.com/user-attachments/assets/6068d92e-216f-4917-809a-66c8367256b6)
 wait...
