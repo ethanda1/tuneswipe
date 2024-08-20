@@ -9,7 +9,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 const openai = new OpenAI({
-  apiKey: 'sk-5dNpEjvGtXlObsRTVqII2TCZJpCyRA_ZawHDnIsRzYT3BlbkFJK079zucUcFEkDOgFkzngw2a267T3qNelPTKO0atn0A',
+  apiKey: 'here',
 });
 app.post("/refresh", (req, res) => {
     const refreshToken = req.body.refreshToken
