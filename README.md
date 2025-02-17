@@ -35,8 +35,3 @@ TuneSwipeAI helps you discover new music effortlessly. By swiping through songs 
 - **Tinder-like Experience**: Swipe and like songs to curate your music taste.
 - **Spotify Integration**: Seamlessly add songs to your Spotify playlist.
 
-## Installation
-
-1. Clone the repository.
-   ```bash
-   git clone https://github.com/your-username/tuneswipeai.git
