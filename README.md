@@ -1,6 +1,6 @@
 # TuneSwipeAI - Music Discovery Made Easy
 
-TuneSwipeAI helps you discover new music effortlessly. By swiping through songs and personalizing your feed with AI-generated recommendations, you can find music that fits your unique taste. Powered by OpenAI's GPT-4 and Spotify's API, this app makes music discovery fun and personalized.
+TuneSwipeAI helps you discover new music effortlessly. and personalized.
 
 ## Technologies Used
 
